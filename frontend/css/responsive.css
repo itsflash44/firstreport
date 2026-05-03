@@ -1,0 +1,111 @@
+/* FirstReport — Mobile-First Responsive
+   Optimised for Samsung Galaxy A03 (~360px) and all small screens.
+   ============================================================================ */
+
+/* ── Base (≤ 360px — Galaxy A03 target) ────────────────────────────────────── */
+@media (max-width: 360px) {
+  .app-header { padding: 0 8px; gap: 6px; }
+  .header-title { font-size: 15px; }
+  .lang-select-mini { max-width: 90px; font-size: 12px; }
+  .nalsa-btn { padding: 7px 10px; font-size: 12px; }
+
+  .screen { padding: 12px; }
+
+  .share-method-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .share-method-btn { min-height: 58px; font-size: 10px; }
+
+  #screen-5 .info-grid { grid-template-columns: 1fr; }
+
+  .mic-btn { width: 76px; height: 76px; }
+
+  .case-card { padding: 12px; gap: 10px; }
+  .case-card .case-icon { width: 44px; height: 44px; font-size: 26px; }
+  .case-card .case-info h3 { font-size: 14px; }
+  .case-card .case-info p { font-size: 12px; }
+}
+
+/* ── Small phones (361–414px) ───────────────────────────────────────────────── */
+@media (min-width: 361px) and (max-width: 414px) {
+  .app-header { padding: 0 12px; }
+  .share-method-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ── Medium screens (415–600px) ─────────────────────────────────────────────── */
+@media (min-width: 415px) and (max-width: 600px) {
+  .screen { padding: 20px; }
+  .share-method-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ── Tablet and above (> 600px) ─────────────────────────────────────────────── */
+@media (min-width: 601px) {
+  .app-header { padding: 0 24px; }
+  .screen { padding: 24px; }
+
+  #screen-5 .info-grid { grid-template-columns: 1fr 1fr; }
+
+  .share-method-grid { grid-template-columns: repeat(4, 1fr); }
+
+  .bottom-action { padding: 16px 24px; }
+}
+
+/* ── Universal touch targets (always ≥ 44px) ────────────────────────────────── */
+button,
+a,
+select,
+input[type="checkbox"],
+input[type="radio"],
+.speaker-btn,
+.case-card,
+.share-method-btn,
+.btn {
+  min-height: 44px;
+}
+
+/* ── Prevent zoom on input focus (iOS) ──────────────────────────────────────── */
+input,
+select,
+textarea {
+  font-size: max(16px, 1rem);
+}
+
+/* ── Safe area insets (notch phones) ────────────────────────────────────────── */
+.app-header {
+  padding-top: env(safe-area-inset-top, 0);
+  height: calc(64px + env(safe-area-inset-top, 0));
+}
+
+.app-main {
+  padding-top: calc(64px + env(safe-area-inset-top, 0));
+}
+
+.bottom-action {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+}
+
+/* ── Reduce motion ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── High contrast / accessibility ──────────────────────────────────────────── */
+@media (prefers-contrast: high) {
+  .btn-primary { border: 2px solid var(--emerald-900); }
+  .case-card { border-width: 3px; }
+  .speaker-btn { border: 1px solid currentColor; }
+}
+
+/* ── Landscape mode adjustments ─────────────────────────────────────────────── */
+@media (max-height: 480px) and (orientation: landscape) {
+  #screen-1 .welcome-hero { padding: 12px 0; }
+  #screen-1 .app-logo { font-size: 32px; }
+  #screen-1 .app-name { font-size: 20px; }
+  .mic-btn { width: 64px; height: 64px; }
+  .classification-hero { padding: 16px; }
+  .classification-hero .section-num { font-size: 32px; }
+}

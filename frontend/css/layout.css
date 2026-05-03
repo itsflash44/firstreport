@@ -1,0 +1,555 @@
+/* FirstReport — Screen Layouts · Luxury Green + Brown Edition
+   Fixed header, screen containers, per-screen layouts.
+   Typography: Calistoga (display) · Inter (body) · JetBrains Mono (labels)
+   ============================================================================ */
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   FIXED APP HEADER
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: linear-gradient(135deg, var(--emerald-900) 0%, var(--emerald-700) 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 10px;
+  z-index: var(--z-fixed);
+  box-shadow: 0 2px 12px rgba(26,92,53,0.35);
+  /* Subtle wood-grain shimmer via border-bottom */
+  border-bottom: 1px solid rgba(196,154,60,0.22);
+}
+
+.header-lang { flex-shrink: 0; }
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: #fff;
+  user-select: none;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Mini language dropdown in header */
+.lang-select-mini {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-full);
+  color: #fff;
+  font-size: 12px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  padding: 6px 10px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  max-width: 108px;
+  outline: none;
+  transition: background var(--transition-fast);
+}
+
+.lang-select-mini:hover {
+  background: rgba(255,255,255,0.20);
+}
+
+.lang-select-mini option {
+  background: var(--emerald-800);
+  color: #fff;
+}
+
+/* Dark mode toggle */
+.dark-toggle {
+  background: rgba(255,255,255,0.10);
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-size: 17px;
+  line-height: 1;
+  padding: 6px 8px;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.dark-toggle:hover { background: rgba(255,255,255,0.20); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   MAIN CONTENT WRAPPER
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.app-main {
+  padding-top: 64px;
+  min-height: 100vh;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN CONTAINER — base
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.screen {
+  display: none;
+  padding: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  animation: fade-in 0.25s var(--ease-out);
+  padding-bottom: 100px; /* room for sticky bottom-action */
+}
+
+.screen.active { display: block; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SECTION HEADING ROW — text + speaker icon
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--fg);
+  flex: 1;
+  letter-spacing: -0.01em;
+}
+
+.section-heading .badge {
+  font-size: 11px;
+}
+
+/* Section label wrapper — sits ABOVE the section-heading */
+.screen-label {
+  margin-bottom: 10px;
+  margin-top: 16px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN 1 — Language Selection (Welcome)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+#screen-1 .welcome-hero {
+  text-align: center;
+  padding: 32px 0 24px;
+}
+
+/* App logo mark — floating animation */
+#screen-1 .app-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, var(--emerald) 0%, var(--emerald-2) 100%);
+  box-shadow: var(--shadow-emerald-lg), var(--shadow-xl);
+  font-size: 36px;
+  margin-bottom: 16px;
+  animation: float-up 4s ease-in-out infinite;
+  position: relative;
+}
+
+/* Gold corner accent on logo */
+#screen-1 .app-logo::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-2) 100%);
+  box-shadow: 0 2px 6px rgba(184,137,42,0.40);
+}
+
+/* App name — Calistoga display font with gradient text */
+#screen-1 .app-name {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-2) 60%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0 0 6px;
+  display: block;
+}
+
+/* Gradient underline bar under app-name */
+#screen-1 .app-name-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+#screen-1 .app-name-underline {
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(26,92,53,0.12) 0%, rgba(184,137,42,0.08) 100%);
+}
+
+/* Tagline */
+#screen-1 .app-tagline {
+  font-size: 14px;
+  color: var(--fg-muted);
+  margin: 4px 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-style: italic;
+}
+
+/* Language dropdown */
+#screen-1 .lang-dropdown-wrap { margin-bottom: 20px; }
+
+#screen-1 .lang-dropdown-wrap label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+  margin-bottom: 8px;
+}
+
+#screen-1 .lang-select-full {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  background-color: var(--bg-warm);
+  color: var(--fg);
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%231A5C35' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 42px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+#screen-1 .lang-select-full:focus {
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 3px rgba(26,92,53,0.14), var(--shadow-sm);
+}
+
+/* Feature pills row */
+#screen-1 .feature-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN 2 — Case Type
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+#screen-2 .case-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN 3 — Incident Recording
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+#screen-3 .recording-area {
+  text-align: center;
+  padding: 24px 0 8px;
+}
+
+#screen-3 .mic-instructions {
+  font-size: 14px;
+  color: var(--fg-muted);
+  margin-bottom: 24px;
+  line-height: 1.65;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--bg-warm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+}
+
+#screen-3 .mic-instructions strong { color: var(--emerald); }
+
+#screen-3 .waveform-wrap {
+  margin: 24px 0;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN 4 — Clarification Loop
+   (relies on .clarify-question and .transcript-preview from theme.css)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* (no extra rules needed — all handled in theme.css) */
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN 5 — Classification Result
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+#screen-5 .info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0 0;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN 6 — Documents & Sharing
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+#screen-6 .doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+#screen-6 .share-section {
+  background: var(--bg-warm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  margin-top: 4px;
+  box-shadow: var(--shadow-xs);
+}
+
+#screen-6 .share-section h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#screen-6 .encryption-section {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#screen-6 .pin-section {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--gold-pale) 0%, var(--bg-warm) 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--brown-100);
+}
+
+#screen-6 .pin-section.visible { display: flex; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN 7 — Case History
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+#screen-7 .history-empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--fg-subtle);
+}
+
+#screen-7 .history-empty .empty-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+  display: block;
+  opacity: 0.5;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   STICKY BOTTOM ACTION BAR
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.bottom-action {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  background: var(--bg-muted);
+  border-top: 1px solid var(--border);
+  z-index: var(--z-sticky);
+  display: flex;
+  gap: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.bottom-action .btn {
+  flex: 1;
+  padding: 15px;
+  font-size: 16px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   LOADING OVERLAY
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,18,8,0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.loading-overlay.show { display: flex; }
+
+.loading-spinner {
+  width: 52px;
+  height: 52px;
+  border: 4px solid rgba(255,255,255,0.18);
+  border-top-color: var(--emerald-3);
+  border-right-color: var(--gold-2);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  box-shadow: 0 0 24px rgba(58,140,87,0.30);
+}
+
+.loading-text {
+  color: rgba(255,255,255,0.90);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   CONFIRMATION DIALOG (bottom sheet)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,18,8,0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 8000;
+}
+
+.dialog-backdrop.show { display: flex; }
+
+.dialog-sheet {
+  background: var(--bg-warm);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 24px 16px 32px;
+  width: 100%;
+  max-width: 480px;
+  animation: slide-up 0.3s var(--ease-out);
+  border-top: 2px solid var(--border);
+  box-shadow: 0 -8px 40px rgba(28,18,8,0.18);
+}
+
+/* Drag handle */
+.dialog-sheet::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-strong);
+  margin: 0 auto 20px;
+}
+
+.dialog-sheet h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+.dialog-sheet p {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: var(--fg-muted);
+  line-height: 1.65;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.dialog-actions .btn {
+  flex: 1;
+  padding: 15px;
+}

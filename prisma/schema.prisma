@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                String    @id @default(uuid())
+  phone             String?   @unique
+  email             String?   @unique
+  name              String?
+  preferredLanguage String    @default("hi")
+  trainingConsent   Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  sessions          Session[]
+}
+
+model Session {
+  id                       String        @id @default(uuid())
+  userId                   String
+  user                     User          @relation(fields: [userId], references: [id])
+  language                 String
+  rawTranscriptJson        String        // AES-256-CBC encrypted JSON string
+  incidentSummary          String
+  bnssSection              String?
+  offenseType              String?       // "Cognizable" | "Non-Cognizable"
+  classificationConfidence Float?
+  entitiesJson             Json?
+  documentsJson            Json?         // Supabase Storage paths
+  status                   SessionStatus @default(DRAFT)
+  consentGiven             Boolean       @default(false)
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+}
+
+model OfflineQueue {
+  id              String    @id @default(uuid())
+  sessionId       String
+  telegramPayload Json
+  retryCount      Int       @default(0)
+  sentAt          DateTime?
+  createdAt       DateTime  @default(now())
+}
+
+enum SessionStatus {
+  DRAFT
+  CLASSIFIED
+  DOCUMENTS_READY
+  SENT
+}
