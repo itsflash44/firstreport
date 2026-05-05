@@ -60,7 +60,9 @@ function ChatContent() {
   const [verdict, setVerdict] = useState<SeverityVerdict | null>(null);
   const [agentSpeaking, setAgentSpeaking] = useState(false);
   const [lastAiText, setLastAiText] = useState('');
+  const [networkError, setNetworkError] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Opening line — derived from i18n + persona
   const openingText = useMemo(() => openingFor(personaId, language), [personaId, language]);
@@ -112,11 +114,10 @@ function ChatContent() {
         }),
       });
 
-      // Handle non-OK responses gracefully — show error, do NOT redirect
+      // Handle non-OK responses gracefully — show ephemeral error banner, do NOT add to transcript
       if (!res.ok) {
-        const aiErr = networkErrorFor(language);
-        setMessages((prev) => [...prev, { role: 'ai', text: aiErr }]);
-        setLastAiText(aiErr);
+        setNetworkError(networkErrorFor(language));
+        setTimeout(() => setNetworkError(null), 6000);
         setIsAITyping(false);
         return;
       }
@@ -165,15 +166,14 @@ function ChatContent() {
         setIsAITyping(false);
       }
     } catch {
-      const aiErr = networkErrorFor(language);
-      setMessages((prev) => [...prev, { role: 'ai', text: aiErr }]);
-      setLastAiText(aiErr);
+      setNetworkError(networkErrorFor(language));
+      setTimeout(() => setNetworkError(null), 6000);
       setIsAITyping(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-off-white flex flex-col">
+    <div className="min-h-screen bg-ivory flex flex-col">
 
       {/* === AGENT INFO BAR === */}
       <div className="bg-white border-b border-cool-gray">
@@ -206,7 +206,7 @@ function ChatContent() {
       </div>
 
       {/* === MESSAGES === */}
-      <main className="flex-1 overflow-y-auto bg-off-white">
+      <main className="flex-1 overflow-y-auto bg-ivory">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
           {messages.map((msg, i) => (
             <div key={i} className="group relative">
@@ -254,26 +254,57 @@ function ChatContent() {
 
       {/* === STICKY INPUT === */}
       <footer className="sticky bottom-0 z-20 bg-white border-t border-cool-gray shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-5 grid sm:grid-cols-[auto,1fr] gap-4 sm:gap-5 items-center">
+        {/* Network error banner — ephemeral, never saved to transcript */}
+        {networkError && (
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-3">
+            <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-sm text-sm font-medium"
+                 style={{ background: 'rgba(217,83,79,0.08)', border: '1px solid rgba(217,83,79,0.25)', color: '#C0392B' }}>
+              <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              <span lang={language}>{networkError}</span>
+            </div>
+          </div>
+        )}
+
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-5 grid sm:grid-cols-[auto,1fr] gap-4 sm:gap-5 items-end">
           <div className="flex justify-center sm:justify-start">
             <MicButton onTranscript={handleUserInput} language={language} disabled={isAITyping} />
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            <input
-              type="text"
+          <div className="flex items-end gap-2 sm:gap-3">
+            <textarea
+              ref={textareaRef}
               value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
+              rows={1}
+              onChange={(e) => {
+                setTextInput(e.target.value);
+                // Auto-resize: shrink then grow to fit content, cap at ~5 lines (128px)
+                const ta = e.target;
+                ta.style.height = 'auto';
+                ta.style.height = Math.min(ta.scrollHeight, 128) + 'px';
+              }}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && textInput.trim()) handleUserInput(textInput);
+                // Send on Enter (without Shift); Shift+Enter adds new line
+                if (e.key === 'Enter' && !e.shiftKey && textInput.trim()) {
+                  e.preventDefault();
+                  handleUserInput(textInput);
+                  if (textareaRef.current) textareaRef.current.style.height = 'auto';
+                }
               }}
               placeholder={t('speak', language)}
               disabled={isAITyping}
               lang={language}
-              className="fr-input flex-1 min-w-0 px-4 py-3 text-base"
+              className="fr-input flex-1 min-w-0 px-4 py-3 text-base resize-none overflow-y-auto"
+              style={{ lineHeight: '1.5', minHeight: '48px', maxHeight: '128px' }}
             />
             <button
-              onClick={() => textInput.trim() && handleUserInput(textInput)}
+              onClick={() => {
+                if (textInput.trim()) {
+                  handleUserInput(textInput);
+                  if (textareaRef.current) textareaRef.current.style.height = 'auto';
+                }
+              }}
               disabled={isAITyping || !textInput.trim()}
               aria-label={t('sendMessage', language)}
               className="shrink-0 w-11 h-11 sm:w-12 sm:h-12 bg-navy text-white rounded-md
@@ -357,7 +388,7 @@ export default function ChatPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-off-white">
+        <div className="min-h-screen flex items-center justify-center bg-ivory">
           <FirstReportLogo size={64} variant="icon" theme="light" />
         </div>
       }

@@ -29,7 +29,7 @@ const AgentAvatar = memo(function AgentAvatar({
   if (compact) {
     return (
       <div
-        className="shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-sm bg-off-white border border-cool-gray flex items-center justify-center relative"
+        className="shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-sm bg-ivory border border-cool-gray flex items-center justify-center relative"
         aria-label={`${persona.titleEn} agent`}
       >
         <FirstReportLogo variant="icon" size={28} theme="light" />
@@ -43,7 +43,7 @@ const AgentAvatar = memo(function AgentAvatar({
   return (
     <figure className="w-full" style={{ maxWidth: size }}>
       <div
-        className="relative aspect-square bg-off-white border border-cool-gray rounded-md overflow-hidden flex flex-col items-center justify-center"
+        className="relative aspect-square bg-ivory border border-cool-gray rounded-md overflow-hidden flex flex-col items-center justify-center"
         style={{ minHeight: Math.min(size, 300) }}
       >
         {/* Edition tag */}

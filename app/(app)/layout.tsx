@@ -9,10 +9,10 @@ import { audioManager } from '@/lib/audioManager';
 import { uiStr } from '@/lib/ui-strings';
 import type { LangCode } from '@/lib/i18n';
 
-// Lazy-load the heavy SettingsDrawer — it's rarely opened so no need to ship it upfront
-const SettingsDrawer = lazy(() => import('@/components/SettingsDrawer'));
+const SettingsDrawer  = lazy(() => import('@/components/SettingsDrawer'));
+const OfflineQueueCard = lazy(() => import('@/components/OfflineQueueCard'));
 
-/* ── SVG icon components ───────────────────────────────────────────── */
+/* ── SVG icons ────────────────────────────────────────────────────── */
 const IconHome = () => (
   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" d="M3 9.75L12 3l9 6.75V21a.75.75 0 01-.75.75H15v-6h-6v6H3.75A.75.75 0 013 21V9.75z" />
@@ -45,7 +45,6 @@ const IconSettings = () => (
   </svg>
 );
 
-/* ── Nav items ──────────────────────────────────────────────────────── */
 const NAV_ITEMS = [
   { href: '/home',      labelKey: 'home'           as const, Icon: IconHome      },
   { href: '/chat',      labelKey: 'newReport'      as const, Icon: IconChat      },
@@ -54,25 +53,20 @@ const NAV_ITEMS = [
   { href: '/history',   labelKey: 'history'        as const, Icon: IconHistory   },
 ];
 
-/* ── Layout ─────────────────────────────────────────────────────────── */
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen,   setSidebarOpen]   = useState(false);
-  const [settingsOpen,  setSettingsOpen]  = useState(false);
+  const [sidebarOpen,  setSidebarOpen]  = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [lang, setLang] = useState<LangCode>('hi-IN');
   const pathname = usePathname();
 
-  // Load persisted language on mount
   useEffect(() => {
-    const saved = localStorage.getItem('fr_lang') as LangCode | null;
+    const saved  = localStorage.getItem('fr_lang') as LangCode | null;
     const urlLang = new URLSearchParams(window.location.search).get('lang') as LangCode | null;
     if (urlLang) setLang(urlLang);
     else if (saved) setLang(saved);
   }, []);
 
-  // Stop audio on route change
-  useEffect(() => {
-    audioManager.stopAll();
-  }, [pathname]);
+  useEffect(() => { audioManager.stopAll(); }, [pathname]);
 
   const handleLangChange = useCallback((next: LangCode) => {
     setLang(next);
@@ -80,33 +74,37 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-off-white">
+    <div className="min-h-screen bg-ivory">
 
-      {/* ── TOP HEADER — fixed 64px ─────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-cool-gray flex items-center px-4 gap-3">
+      {/* ── TOP HEADER ──────────────────────────────────────────────── */}
+      <header className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center px-4 gap-3"
+              style={{ background: 'rgba(15,31,61,0.97)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
 
         {/* Hamburger */}
         <button
           onClick={() => setSidebarOpen((v) => !v)}
           aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
-          className="w-9 h-9 flex flex-col items-center justify-center gap-[5px] rounded hover:bg-off-white transition-colors shrink-0"
+          className="w-9 h-9 flex flex-col items-center justify-center gap-[5px] rounded-sm
+                     hover:bg-white/8 transition-colors shrink-0"
         >
-          <span className={`block w-5 h-0.5 bg-navy transition-all duration-200 origin-center ${sidebarOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
-          <span className={`block w-5 h-0.5 bg-navy transition-all duration-200 ${sidebarOpen ? 'opacity-0' : ''}`} />
-          <span className={`block w-5 h-0.5 bg-navy transition-all duration-200 origin-center ${sidebarOpen ? '-rotate-45 -translate-y-[7px]' : ''}`} />
+          <span className={`block w-4.5 h-0.5 bg-white/70 transition-all duration-300 origin-center ${sidebarOpen ? 'rotate-45 translate-y-[7px]' : ''}`} />
+          <span className={`block w-4.5 h-0.5 bg-white/70 transition-all duration-300 ${sidebarOpen ? 'opacity-0' : ''}`} />
+          <span className={`block w-4.5 h-0.5 bg-white/70 transition-all duration-300 origin-center ${sidebarOpen ? '-rotate-45 -translate-y-[7px]' : ''}`} />
         </button>
 
         {/* Logo */}
         <Link href="/home" className="flex-1">
-          <FirstReportLogo variant="wordmark" size={36} theme="light" />
+          <FirstReportLogo variant="wordmark" size={34} theme="light" />
         </Link>
 
-        {/* Right: language switcher + NALSA */}
+        {/* Right cluster */}
         <div className="flex items-center gap-2 shrink-0">
           <LanguageSwitcher current={lang} onChange={handleLangChange} compact />
           <a
             href="tel:15100"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-error text-white text-xs font-semibold rounded hover:bg-red-600 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm
+                       text-xs font-semibold uppercase tracking-[0.12em]
+                       bg-error text-white hover:bg-red-600 transition-colors duration-300"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-rec shrink-0" />
             <span className="hidden sm:inline">NALSA ·</span> 15100
@@ -114,22 +112,26 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      {/* ── SIDEBAR BACKDROP (mobile) ──────────────────────────────── */}
+      {/* ── SIDEBAR BACKDROP (mobile) ─────────────────────────────── */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-navy/40 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-navy-deep/60 backdrop-blur-sm md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* ── SIDEBAR ────────────────────────────────────────────────── */}
+      {/* ── SIDEBAR ─────────────────────────────────────────────────── */}
       <aside
-        className={`
-          fixed top-16 left-0 bottom-0 z-40 flex flex-col
-          bg-[#142038] transition-all duration-200 ease-in-out overflow-hidden
-          ${sidebarOpen ? 'w-56' : 'w-0 md:w-16'}
-        `}
+        className={`fixed top-16 left-0 bottom-0 z-40 flex flex-col
+                    transition-all duration-300 ease-in-out overflow-hidden
+                    ${sidebarOpen ? 'w-56' : 'w-0 md:w-[60px]'}`}
+        style={{ background: 'linear-gradient(180deg, #0F1F3D 0%, #0A1628 100%)',
+                 borderRight: '1px solid rgba(255,255,255,0.06)' }}
       >
+        {/* Gold top accent */}
+        <div className="h-[2px] shrink-0"
+             style={{ background: 'linear-gradient(90deg, #B8962E, #5FA8A0, #B8962E)' }} />
+
         <nav className="flex-1 py-3 overflow-hidden">
           {NAV_ITEMS.map(({ href, labelKey, Icon }) => {
             const isActive = pathname === href || pathname.startsWith(href + '/');
@@ -140,32 +142,27 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 href={href}
                 onClick={() => setSidebarOpen(false)}
                 title={label}
-                className={`
-                  relative flex items-center gap-3 mx-2 px-3 py-3 rounded-md mb-1
-                  transition-colors duration-150 whitespace-nowrap group
+                className={`relative flex items-center gap-3 mx-2 px-3 py-3 rounded-sm mb-1
+                             transition-all duration-300 whitespace-nowrap group
                   ${isActive
-                    ? 'bg-white/10 text-white border-l-2 border-teal pl-[10px]'
-                    : 'text-white/60 hover:text-white hover:bg-white/8'}
-                `}
+                    ? 'text-white'
+                    : 'text-white/50 hover:text-white/90 hover:bg-white/6'}`}
+                style={isActive ? {
+                  background: 'rgba(95,168,160,0.12)',
+                  borderLeft: '2px solid #5FA8A0',
+                  paddingLeft: '10px',
+                } : {}}
               >
                 <span className="shrink-0"><Icon /></span>
-
-                {/* Label — visible when open */}
-                <span
-                  className={`text-sm font-medium transition-opacity duration-150
-                    ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-                >
+                <span className={`text-sm font-medium transition-opacity duration-200
+                  ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
                   {label}
                 </span>
-
-                {/* Tooltip — only when collapsed (desktop) */}
                 {!sidebarOpen && (
-                  <span className="
-                    hidden md:block absolute left-full ml-2 px-2 py-1
-                    bg-navy text-white text-xs rounded whitespace-nowrap
-                    opacity-0 group-hover:opacity-100 pointer-events-none
-                    transition-opacity duration-150
-                  ">
+                  <span className="hidden md:block absolute left-full ml-2 px-2 py-1
+                                   bg-navy-deep text-white text-xs rounded-sm whitespace-nowrap
+                                   opacity-0 group-hover:opacity-100 pointer-events-none
+                                   transition-opacity duration-200 border border-white/10 shadow-md">
                     {label}
                   </span>
                 )}
@@ -174,27 +171,25 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        {/* Settings gear */}
-        <div className="shrink-0 p-2 border-t border-white/10">
+        {/* Settings */}
+        <div className="shrink-0 p-2 border-t border-white/8">
           <button
             onClick={() => { setSettingsOpen(true); setSidebarOpen(false); }}
             title={uiStr('settings', lang)}
-            className="relative flex items-center gap-3 w-full px-3 py-3 rounded-md
-                       text-white/60 hover:text-white hover:bg-white/8
-                       transition-colors duration-150 whitespace-nowrap group"
+            className="relative flex items-center gap-3 w-full px-3 py-3 rounded-sm
+                       text-white/50 hover:text-white/90 hover:bg-white/6
+                       transition-all duration-300 whitespace-nowrap group"
           >
             <span className="shrink-0"><IconSettings /></span>
-            <span className={`text-sm font-medium transition-opacity duration-150
+            <span className={`text-sm font-medium transition-opacity duration-200
               ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
               {uiStr('settings', lang)}
             </span>
             {!sidebarOpen && (
-              <span className="
-                hidden md:block absolute left-full ml-2 px-2 py-1
-                bg-navy text-white text-xs rounded whitespace-nowrap
-                opacity-0 group-hover:opacity-100 pointer-events-none
-                transition-opacity duration-150
-              ">
+              <span className="hidden md:block absolute left-full ml-2 px-2 py-1
+                               bg-navy-deep text-white text-xs rounded-sm whitespace-nowrap
+                               opacity-0 group-hover:opacity-100 pointer-events-none
+                               transition-opacity duration-200 border border-white/10 shadow-md">
                 {uiStr('settings', lang)}
               </span>
             )}
@@ -202,7 +197,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* ── SETTINGS DRAWER — lazy loaded ──────────────────────────── */}
+      {/* ── SETTINGS DRAWER ───────────────────────────────────────── */}
       <Suspense fallback={null}>
         <SettingsDrawer
           open={settingsOpen}
@@ -212,13 +207,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         />
       </Suspense>
 
-      {/* ── MAIN CONTENT ────────────────────────────────────────────── */}
-      <main
-        className={`pt-16 min-h-screen transition-all duration-200 ease-in-out
-          ${sidebarOpen ? 'md:pl-56' : 'md:pl-16'}`}
-      >
+      {/* ── MAIN CONTENT ──────────────────────────────────────────── */}
+      <main className={`pt-16 min-h-screen transition-all duration-300 ease-in-out
+        ${sidebarOpen ? 'md:pl-56' : 'md:pl-[60px]'}`}>
         {children}
       </main>
+
+      {/* ── OFFLINE QUEUE ─────────────────────────────────────────── */}
+      <Suspense fallback={null}>
+        <OfflineQueueCard />
+      </Suspense>
     </div>
   );
 }

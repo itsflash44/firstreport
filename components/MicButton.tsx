@@ -187,7 +187,7 @@ export default function MicButton({
           </svg>
         )}
         {isProcessing && (
-          <svg className="w-10 h-10 animate-spin-slow text-ink" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+          <svg className="w-10 h-10 animate-spin-slow text-navy-deep" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="9" strokeDasharray="40 60" />
           </svg>
         )}

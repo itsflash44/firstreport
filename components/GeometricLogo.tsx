@@ -11,7 +11,7 @@ interface GeometricLogoProps {
 export default function GeometricLogo({ size = 48 }: GeometricLogoProps) {
   return (
     <span
-      className="inline-flex items-center justify-center border border-navy bg-off-white font-serif font-bold text-navy select-none rounded-sm"
+      className="inline-flex items-center justify-center border border-navy bg-ivory font-serif font-bold text-navy select-none rounded-sm"
       style={{ width: size, height: size, lineHeight: 1, fontSize: size * 0.58 }}
       aria-label="FirstReport"
     >

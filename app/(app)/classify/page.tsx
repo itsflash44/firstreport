@@ -6,6 +6,10 @@ import SpeakerButton from '@/components/SpeakerButton';
 import FirstReportLogo from '@/components/FirstReportLogo';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { LANG_BY_CODE, type LangCode, type PersonaId, t } from '@/lib/i18n';
+import OfficerPhotoUpload from '@/components/OfficerPhotoUpload';
+import LegalDocumentChecklist from '@/components/LegalDocumentChecklist';
+import LegalExplainer from '@/components/LegalExplainer';
+import EvidencePhotoAudit from '@/components/EvidencePhotoAudit';
 
 function ClassifyContent() {
   const router = useRouter();
@@ -32,21 +36,30 @@ function ClassifyContent() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [crimeInput, setCrimeInput] = useState<any>(null);
   const [error, setError] = useState('');
+  const [sessionId, setSessionId] = useState('');
 
   useEffect(() => {
     const classify = async () => {
       const incidentSummary = sessionStorage.getItem('incident_summary') || '';
+      const sid = sessionStorage.getItem('current_session_id') || '';
       setSummary(incidentSummary);
+      setSessionId(sid);
       try {
         const res = await fetch('/api/classify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ summary: incidentSummary, language, persona: personaId }),
+          body: JSON.stringify({ summary: incidentSummary, language, persona: personaId, sessionId: sid }),
         });
         const data = await res.json();
         if (data.success) {
           setClassification(data.classification);
           setCrimeInput(data.crime_input);
+          if (data.sessionId) {
+            setSessionId(data.sessionId);
+            sessionStorage.setItem('current_session_id', data.sessionId);
+          }
+          sessionStorage.setItem('classification', JSON.stringify(data.classification));
+          sessionStorage.setItem('crime_input', JSON.stringify(data.crime_input));
         } else {
           setError('वर्गीकरण में समस्या हुई।');
         }
@@ -67,7 +80,7 @@ function ClassifyContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-off-white gap-5">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-ivory gap-5">
         <FirstReportLogo size={72} variant="icon" theme="light" />
         <p className="text-sm font-medium text-secondary">Finding applicable section…</p>
         <div className="w-full max-w-md space-y-3 px-6">
@@ -81,7 +94,7 @@ function ClassifyContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-off-white gap-5 px-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-ivory gap-5 px-6">
         <div className="fr-card p-5 border-l-4 border-error max-w-sm w-full text-center">
           <p className="text-sm font-medium text-secondary">{error}</p>
         </div>
@@ -100,7 +113,7 @@ function ClassifyContent() {
   const pageText = `धारा ${classification?.bnss_section} BNSS. ${classification?.offense_name_hindi}. ${classification?.rationale_hindi}`;
 
   return (
-    <div className="min-h-screen bg-off-white">
+    <div className="min-h-screen bg-ivory">
       {/* Breadcrumb / lang switcher strip */}
       <div className="bg-white border-b border-cool-gray">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
@@ -167,6 +180,15 @@ function ClassifyContent() {
               </p>
             </div>
           )}
+
+          {/* Legal Explainer — Gemma explains the law in simple Hindi */}
+          <LegalExplainer
+            bnssSection={classification?.bnss_section}
+            offenseName={classification?.offense_name_hindi}
+            incident={summary}
+            language={language}
+            persona={personaId}
+          />
         </section>
 
         {isLowConfidence && (
@@ -182,6 +204,26 @@ function ClassifyContent() {
           </section>
         )}
 
+        {/* Officer Photo Upload — optional, shown after classification */}
+        {classification && (
+          <OfficerPhotoUpload sessionId={sessionId} language={language} />
+        )}
+
+        {/* Evidence Vision Audit — Gemma checks photo quality for court use */}
+        {classification && (
+          <EvidencePhotoAudit language={language} sessionId={sessionId} />
+        )}
+
+        {/* Legal Document Checklist — required vs missing docs for this BNSS offense */}
+        {classification && (
+          <LegalDocumentChecklist
+            bnssSection={classification.bnss_section}
+            offenseName={classification.offense_name_hindi}
+            incident={summary}
+            language={language}
+          />
+        )}
+
         <div className="space-y-3">
           {!isLowConfidence && (
             <button
@@ -194,7 +236,7 @@ function ClassifyContent() {
           )}
           <button
             onClick={handleRetry}
-            className="w-full py-3 text-sm font-semibold text-secondary bg-white border border-cool-gray rounded hover:bg-off-white transition-colors"
+            className="w-full py-3 text-sm font-semibold text-secondary bg-white border border-cool-gray rounded hover:bg-ivory transition-colors"
           >
             ✗ Retry Interview
           </button>
@@ -217,7 +259,7 @@ export default function ClassifyPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-off-white">
+        <div className="min-h-screen flex items-center justify-center bg-ivory">
           <FirstReportLogo size={64} variant="icon" theme="light" />
         </div>
       }

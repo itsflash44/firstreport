@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FirstReport – Project Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --ink: #1A1410;
+    --saffron: #E8600A;
+    --saffron-light: #F5832A;
+    --gold: #C9922A;
+    --muted: #6B5E50;
+    --border: #D9CFC2;
+    --section-bg: #FDFAF5;
+    --tag-bg: #EDE5D8;
+    --green: #2A7A4B;
+    --blue: #1A4A7A;
+    --red: #8A1A1A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* COVER */
+  .cover {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 80px 60px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,96,10,0.25) 0%, transparent 70%);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 30%;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,146,42,0.15) 0%, transparent 70%);
+  }
+  .cover-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--saffron);
+    margin-bottom: 20px;
+  }
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 12px;
+  }
+  .cover h1 span { color: var(--saffron); }
+  .cover .tagline {
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(245,240,232,0.7);
+    margin-bottom: 40px;
+    max-width: 500px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .cover-meta-item { }
+  .cover-meta-item .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .cover-meta-item .val {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--cream);
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  /* SECTION HEADERS */
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--saffron);
+    display: block;
+    margin-bottom: 6px;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 24px;
+    color: var(--ink);
+  }
+  h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 10px;
+    margin-top: 24px;
+  }
+  p { color: var(--muted); margin-bottom: 12px; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--section-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .card p { margin-bottom: 0; font-size: 14px; }
+
+  /* STEPS / JOURNEY */
+  .journey {
+    position: relative;
+    padding-left: 32px;
+  }
+  .journey::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--saffron), var(--gold), transparent);
+  }
+  .journey-step {
+    position: relative;
+    margin-bottom: 28px;
+  }
+  .journey-step::before {
+    content: '';
+    position: absolute;
+    left: -26px; top: 6px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--saffron);
+    border: 2px solid var(--cream);
+    box-shadow: 0 0 0 2px var(--saffron);
+  }
+  .step-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .step-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .step-desc { font-size: 14px; color: var(--muted); margin-bottom: 0; }
+
+  /* TAGS */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .tag {
+    background: var(--tag-bg);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+  .tag.green { background: #D4EDE0; color: var(--green); }
+  .tag.blue { background: #D4DFF0; color: var(--blue); }
+  .tag.orange { background: #FDEBD0; color: var(--saffron); }
+  .tag.red { background: #F0D4D4; color: var(--red); }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .cover h1 { font-size: 48px; }
+    .cover { padding: 50px 30px 40px; }
+    .container { padding: 40px 20px; }
+  }
+
+  /* PHASES TABLE */
+  .phase-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 100px;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+  .phase-row:last-child { border-bottom: none; }
+  .phase-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .phase-items { font-size: 13px; color: var(--muted); }
+  .phase-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--saffron);
+    text-align: right;
+  }
+
+  /* CALLOUT */
+  .callout {
+    border-left: 3px solid var(--saffron);
+    padding: 16px 20px;
+    background: #FEF5EC;
+    border-radius: 0 6px 6px 0;
+    margin: 20px 0;
+  }
+  .callout.blue {
+    border-left-color: var(--blue);
+    background: #EEF3FA;
+  }
+  .callout.green {
+    border-left-color: var(--green);
+    background: #EEF7F2;
+  }
+  .callout-title {
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .callout p { margin: 0; font-size: 13px; }
+
+  /* LIST */
+  ul.styled { list-style: none; padding: 0; }
+  ul.styled li {
+    padding: 6px 0 6px 20px;
+    position: relative;
+    font-size: 14px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  ul.styled li:last-child { border-bottom: none; }
+  ul.styled li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--saffron);
+    font-size: 12px;
+    top: 7px;
+  }
+
+  /* RISK TABLE */
+  .risk-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 1fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .risk-row.header {
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    padding-bottom: 8px;
+  }
+  .risk-row:last-child { border-bottom: none; }
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+  }
+  .pill.high { background: #F0D4D4; color: var(--red); }
+  .pill.med { background: #FDEBD0; color: #8A5A0A; }
+  .pill.low { background: #D4EDE0; color: var(--green); }
+
+  /* FOOTER */
+  .footer {
+    background: var(--ink);
+    color: rgba(245,240,232,0.5);
+    text-align: center;
+    padding: 32px 40px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+  }
+  .footer span { color: var(--saffron); }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-label">Project Blueprint · v1.0</div>
+  <h1>First<span>Report</span></h1>
+  <p class="tagline">India's first end-to-end AI legal companion — from problem to resolution, in your language.</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="label">Stack</span>
+      <span class="val">Next.js 14 + Supabase</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">AI Engine</span>
+      <span class="val">Claude API (Anthropic)</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">Target</span>
+      <span class="val">India + Global English</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">Domains</span>
+      <span class="val">7 Legal Verticals</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="label">MVP Timeline</span>
+      <span class="val">10–12 Weeks</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SECTION 1: PRODUCT VISION -->
+  <span class="section-num">01 — Vision</span>
+  <h2>What FirstReport Is</h2>
+
+  <p>Most Indians who face a legal problem do not know where to start. They cannot afford a consultation just to understand their situation. FirstReport removes this barrier — it is a guided, AI-powered legal journey that starts with a problem statement and ends with either a ready-to-use letter/document or a warm handoff to a vetted lawyer. Everything happens in the user's preferred language.</p>
+
+  <div class="callout green">
+    <div class="callout-title">Core Promise</div>
+    <p>"You come with a problem. You leave with a plan, a document, or a lawyer — in your language."</p>
+  </div>
+
+  <div class="grid-3" style="margin-top:24px">
+    <div class="card">
+      <div class="card-title">🌐 Multilingual First</div>
+      <p>Hindi, Tamil, Telugu, Kannada, Bengali, Marathi, Gujarati + English. Language chosen at entry, persists throughout the journey.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">⚖️ 7 Legal Domains</div>
+      <p>Property, Family, Consumer, Employment, Criminal, Business/Contract, RTI & Govt Processes — at launch.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🔒 Auth + Guest Mode</div>
+      <p>Google SSO for journey history, ratings, and saved documents. Guests get full functionality, no persistence.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 2: USER JOURNEY -->
+  <span class="section-num">02 — User Journey</span>
+  <h2>The 8-Stage Legal Journey</h2>
+
+  <div class="journey">
+
+    <div class="journey-step">
+      <span class="step-label">Stage 1</span>
+      <div class="step-title">Landing & Language Selection</div>
+      <p class="step-desc">User lands on homepage. Selects their language from a visual language picker (flag + script name). Language is stored in session/profile. Guest users proceed immediately; a soft "Sign in to save progress" nudge is shown.</p>
+    </div>
+
+    <div class="journey-step">
+      <span class="step-label">Stage 2</span>
+      <div class="step-title">Problem Input</div>
+      <p class="step-desc">Free-text field in chosen language. User describes their situation in plain words. A voice input option (via Web Speech API) is available for low-literacy users. A "Not sure how to describe? Try these examples" tooltip gives domain prompts.</p>
+    </div>
+
+    <div class="journey-step">
+      <span class="step-label">Stage 3</span>
+      <div class="step-title">AI Legal Overview</div>
+      <p class="step-desc">Claude reads the problem, classifies it into a legal domain, and responds in the user's language with: (a) what this situation is legally called, (b) applicable laws or acts, (c) whether this is civil, criminal, or administrative, (d) urgency indicator — "Is this time-sensitive?" with reason.</p>
+    </div>
+
+    <div class="journey-step">
+      <span class="step-label">Stage 4</span>
+      <div class="step-title">Documentation Checklist</div>
+      <p class="step-desc">AI generates a checklist of documents required for this specific legal situation. Each item has: document name (translated), why it is needed, and where to get it. User can check items off. This checklist is saved for logged-in users.</p>
+    </div>
+
+    <div class="journey-step">
+      <span class="step-label">Stage 5 (Optional)</span>
+      <div class="step-title">Document Upload & Verification</div>
+      <p class="step-desc">User may upload documents (PDF, JPG). AI reviews them — checks if the document appears to be the right type, flags obvious issues (expired date, wrong party name, missing signatures). User can skip this and declare "I have all verified documents." A visual progress indicator shows verification status per document.</p>
+    </div>
+
+    <div class="journey-step">
+      <span class="step-label">Stage 6</span>
+      <div class="step-title">Action Plan Generation</div>
+      <p class="step-desc">The full picture: AI decides the resolution path — Court, Government Office, or Out-of-Court. Then provides: step-by-step process in plain language, what type of lawyer is needed (if court), which government office / official to approach (if administrative), what to hand over and in what order, any deadlines or hearing types to be aware of.</p>
+    </div>
+
+    <div class="journey-step">
+      <span class="step-label">Stage 7</span>
+      <div class="step-title">Letter / Document Generation</div>
+      <p class="step-desc">If a formal letter is needed (legal notice, RTI application, complaint to authority, consumer forum letter), AI asks the user if they want it generated. If yes — AI asks 3–5 targeted questions (name, date, opposing party, specific relief sought), then generates a properly formatted, legally worded letter. User can download it as PDF.</p>
+    </div>
+
+    <div class="journey-step">
+      <span class="step-label">Stage 8</span>
+      <div class="step-title">Lawyer Marketplace & Exit</div>
+      <p class="step-desc">User is shown a curated list of partner lawyers filtered by: legal domain, city/state, language spoken, and consultation fee. Lawyer cards show photo, specialization, years of experience, rating (from logged-in users), and a blurred phone number that reveals on click (or after mini payment). User may exit with their documents or book a consultation.</p>
+    </div>
+
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 3: FEATURE SPEC -->
+  <span class="section-num">03 — Feature Specification</span>
+  <h2>Complete Feature Set</h2>
+
+  <h3>Authentication & User Management</h3>
+  <ul class="styled">
+    <li>Google OAuth via Supabase Auth — one-click sign in</li>
+    <li>Guest mode — full journey, no account required, no persistence</li>
+    <li>Session continuity — logged-in users can pause and resume a journey</li>
+    <li>Journey history dashboard — list of past journeys with status, date, domain</li>
+    <li>Per-journey document storage (Supabase Storage, private bucket per user)</li>
+  </ul>
+
+  <h3>AI Engine (Claude)</h3>
+  <ul class="styled">
+    <li>Domain classifier — detects legal vertical from free-text problem statement</li>
+    <li>Multilingual response — responds in same language user writes in (detected via langdetect or explicit selection)</li>
+    <li>Document checklist generator — domain-specific, contextually aware</li>
+    <li>Document OCR & verification — uses Claude Vision to check uploaded images/PDFs</li>
+    <li>Action plan generator — court vs. administrative vs. out-of-court routing</li>
+    <li>Letter generator — structured questions → formatted legal letter (RTI, consumer complaint, legal notice, etc.)</li>
+    <li>Streaming responses — word-by-word output for perceived speed</li>
+    <li>Conversation memory within journey — all stages share context</li>
+  </ul>
+
+  <h3>Lawyer Marketplace</h3>
+  <ul class="styled">
+    <li>Dummy lawyers at MVP (10–15 profiles per domain) — Indian photos, realistic bios</li>
+    <li>Filters: domain, state, language, consultation fee range</li>
+    <li>Reveal-on-intent phone number (click to reveal OR micro-payment gate)</li>
+    <li>Post-consultation rating system for logged-in users (1–5 stars + written review)</li>
+    <li>Future: real lawyer onboarding with verification badge</li>
+  </ul>
+
+  <h3>Letter & Document Module</h3>
+  <ul class="styled">
+    <li>Templates: RTI Application, Legal Notice, Consumer Forum Complaint, Police Complaint, Employment Termination Response, Rent Dispute Notice</li>
+    <li>Dynamic question flow based on letter type</li>
+    <li>Generated letter shown in preview with proper formatting</li>
+    <li>Download as PDF (via html2pdf or Puppeteer serverless)</li>
+    <li>Saved to user's journey history if logged in</li>
+  </ul>
+
+  <hr class="divider">
+
+  <!-- SECTION 4: TECH ARCHITECTURE -->
+  <span class="section-num">04 — Technical Architecture</span>
+  <h2>Stack & System Design</h2>
+
+  <div class="grid-2">
+    <div>
+      <h3>Frontend</h3>
+      <ul class="styled">
+        <li>Next.js 14 (App Router) — SSR + streaming support</li>
+        <li>Tailwind CSS — utility-first styling</li>
+        <li>Shadcn/ui — accessible component base</li>
+        <li>React Context + Zustand — journey state management</li>
+        <li>next-i18n-router — language routing (/hi, /ta, /en)</li>
+        <li>Web Speech API — voice input for problem statement</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Backend / API</h3>
+      <ul class="styled">
+        <li>Next.js API Routes — all AI calls server-side (no key exposure)</li>
+        <li>Supabase — Postgres DB, Auth, Storage, Realtime</li>
+        <li>Anthropic Claude API — core AI engine</li>
+        <li>Claude Vision — document verification (Stage 5)</li>
+        <li>Vercel — deployment, Edge Functions for streaming</li>
+        <li>Resend — email notifications (journey saved, lawyer contacted)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Database Schema (Key Tables)</h3>
+  <div class="card">
+    <div style="font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); line-height:2;">
+      <strong style="color:var(--ink)">users</strong> — id, email, name, avatar_url, preferred_language, created_at<br>
+      <strong style="color:var(--ink)">journeys</strong> — id, user_id, title, domain, language, status, created_at, updated_at<br>
+      <strong style="color:var(--ink)">journey_stages</strong> — id, journey_id, stage_num, input, ai_output, completed_at<br>
+      <strong style="color:var(--ink)">documents</strong> — id, journey_id, user_id, file_url, doc_type, verification_status<br>
+      <strong style="color:var(--ink)">generated_letters</strong> — id, journey_id, letter_type, content, pdf_url, created_at<br>
+      <strong style="color:var(--ink)">lawyers</strong> — id, name, photo_url, domain[], state, languages[], fee, rating, phone_hash<br>
+      <strong style="color:var(--ink)">lawyer_ratings</strong> — id, lawyer_id, user_id, stars, review, created_at
+    </div>
+  </div>
+
+  <h3>AI Prompt Architecture</h3>
+  <div class="callout blue">
+    <div class="callout-title">Multi-Stage Prompt Design</div>
+    <p>Each stage gets a dedicated system prompt with: (1) role definition, (2) language instruction, (3) domain context injected from stage 3 onwards, (4) conversation history from prior stages, (5) output format specification (JSON for structured data, Markdown for display text). All prompts are stored as versioned templates in /lib/prompts.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 5: PAGES & ROUTES -->
+  <span class="section-num">05 — Pages & Routes</span>
+  <h2>Application Sitemap</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Public Routes</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);line-height:2.2;">
+        / → Landing page<br>
+        /start → Language selection<br>
+        /journey → 8-stage journey flow<br>
+        /lawyers → Marketplace<br>
+        /about → About NyaAI + disclaimer<br>
+        /[lang]/journey → Localized entry
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Authenticated Routes</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);line-height:2.2;">
+        /dashboard → Journey history<br>
+        /journey/[id] → Resume journey<br>
+        /journey/[id]/letter → View letter<br>
+        /profile → Language, settings<br>
+        /ratings → My lawyer reviews
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 6: SUGGESTIONS -->
+  <span class="section-num">06 — Suggestions to Make This Kickass</span>
+  <h2>Recommendations & Power Features</h2>
+
+  <div class="card" style="border-left:3px solid var(--saffron);">
+    <div class="card-title">🎯 Suggestion 1: "FirstScore" — Legal Strength Indicator</div>
+    <p>After Stage 3, show the user a visual score (e.g., 72/100) representing how strong their legal position is based on the described facts. This is extremely engaging, shareable, and helps users understand their standing before investing time/money. Powered by Claude reasoning.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--gold);">
+    <div class="card-title">💬 Suggestion 2: Hinglish / Code-Switch Support</div>
+    <p>Indians naturally mix Hindi and English. Train the prompt to accept and respond to Hinglish — "Mere landlord ne mera deposit nahi diya" should work as naturally as pure Hindi or pure English. This massively increases adoption.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--green);">
+    <div class="card-title">📱 Suggestion 3: WhatsApp Companion</div>
+    <p>After completing a journey, offer to send the action plan + letter to WhatsApp. Use WhatsApp Business API. This is how most Indians share and store important documents. Huge differentiator.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--blue);">
+    <div class="card-title">🔔 Suggestion 4: Court Date / Deadline Tracker</div>
+    <p>If the AI detects dates (filing deadline, limitation period), create a reminder card the user can add to their Google Calendar via a one-click OAuth flow. Prevents cases from being dismissed for missed deadlines.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid #8A1A8A;">
+    <div class="card-title">📊 Suggestion 5: Anonymous Case Insights</div>
+    <p>Aggregate anonymised data across journeys to show stats like: "82% of landlord deposit disputes in Delhi are resolved without court." This builds trust, educates users, and gives you a unique data moat over time.</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid #1A8A7A;">
+    <div class="card-title">⚡ Suggestion 6: Express Mode (2-Minute Summary)</div>
+    <p>For returning users or impatient users — "Just tell me what to do" button that skips the educational content and jumps straight to the action plan. Respects user time and increases completion rate.</p>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">Legal Disclaimer Strategy</div>
+    <p>Add a persistent, tasteful disclaimer: "NyaAI provides legal information, not legal advice. Consult a qualified lawyer for your specific situation." Display this at Stage 3 and on every generated letter. This is non-negotiable for legal liability protection.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 7: ROADMAP -->
+  <span class="section-num">07 — Build Roadmap</span>
+  <h2>Phased Delivery Plan</h2>
+
+  <div class="phase-row" style="border-bottom:2px solid var(--border);">
+    <div style="font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">Phase</div>
+    <div style="font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);">Deliverables</div>
+    <div style="font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);text-align:right;">Duration</div>
+  </div>
+
+  <div class="phase-row">
+    <div class="phase-name">Phase 1<br><span style="font-weight:400;font-size:12px;color:var(--muted)">Foundation</span></div>
+    <div class="phase-items">Project setup (Next.js + Supabase + Auth), DB schema, language routing, landing page + language picker, basic journey shell (8 stage layout), Claude API integration (Stage 2 → Stage 3 pipeline)</div>
+    <div class="phase-time">Weeks 1–2</div>
+  </div>
+
+  <div class="phase-row">
+    <div class="phase-name">Phase 2<br><span style="font-weight:400;font-size:12px;color:var(--muted)">Core Journey</span></div>
+    <div class="phase-items">Stage 4 (document checklist), Stage 5 (optional upload + Claude Vision verification), Stage 6 (action plan with court/govt routing), streaming AI responses, journey state persistence for logged-in users</div>
+    <div class="phase-time">Weeks 3–5</div>
+  </div>
+
+  <div class="phase-row">
+    <div class="phase-name">Phase 3<br><span style="font-weight:400;font-size:12px;color:var(--muted)">Letters & Docs</span></div>
+    <div class="phase-items">Stage 7 (letter generation with Q&A flow), 6 letter templates, PDF export, Supabase Storage for generated docs, document history in dashboard</div>
+    <div class="phase-time">Weeks 6–7</div>
+  </div>
+
+  <div class="phase-row">
+    <div class="phase-name">Phase 4<br><span style="font-weight:400;font-size:12px;color:var(--muted)">Marketplace</span></div>
+    <div class="phase-items">Stage 8 (lawyer cards with dummy data), domain + state + language filters, reveal-number mechanic, post-consultation rating system, lawyer dashboard stub</div>
+    <div class="phase-time">Weeks 8–9</div>
+  </div>
+
+  <div class="phase-row">
+    <div class="phase-name">Phase 5<br><span style="font-weight:400;font-size:12px;color:var(--muted)">Polish & Launch</span></div>
+    <div class="phase-items">Mobile responsiveness audit, voice input, Nyay Score feature, Express Mode, legal disclaimer system, error handling, rate limiting on AI calls, Vercel production deploy, beta testing with 20 users</div>
+    <div class="phase-time">Weeks 10–12</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 8: RISKS -->
+  <span class="section-num">08 — Risks & Mitigations</span>
+  <h2>Key Risks</h2>
+
+  <div class="risk-row header">
+    <div>Risk</div>
+    <div>Impact</div>
+    <div>Likelihood</div>
+    <div>Mitigation</div>
+  </div>
+  <div class="risk-row">
+    <div>AI gives incorrect legal information</div>
+    <div><span class="pill high">High</span></div>
+    <div><span class="pill med">Med</span></div>
+    <div>Prominent disclaimer on every output; frame as "information not advice"; lawyer CTA always present</div>
+  </div>
+  <div class="risk-row">
+    <div>Regional language quality degrades</div>
+    <div><span class="pill med">Med</span></div>
+    <div><span class="pill med">Med</span></div>
+    <div>Test each language with 10 real users before launch; Claude handles Indian languages well natively</div>
+  </div>
+  <div class="risk-row">
+    <div>Document upload privacy concerns</div>
+    <div><span class="pill high">High</span></div>
+    <div><span class="pill med">Med</span></div>
+    <div>Private Supabase buckets per user; docs not stored after verification; clear privacy policy</div>
+  </div>
+  <div class="risk-row">
+    <div>Claude API costs at scale</div>
+    <div><span class="pill med">Med</span></div>
+    <div><span class="pill low">Low</span></div>
+    <div>Cache domain classifier results; rate limit guest users; monetize before scaling</div>
+  </div>
+  <div class="risk-row">
+    <div>Low journey completion rate</div>
+    <div><span class="pill med">Med</span></div>
+    <div><span class="pill med">Med</span></div>
+    <div>Progress bar always visible; "Save & Continue Later" for logged-in; Express Mode for impatient users</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SECTION 9: OPEN QUESTIONS -->
+  <span class="section-num">09 — Open Questions for You</span>
+  <h2>Decisions Needed Before Building</h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">💰 Monetisation Model</div>
+      <p>Free journey + paid letter PDF? Pay-per-reveal for lawyer numbers? Subscription for history? Lawyer lead-gen fee? This affects architecture significantly.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🧑‍⚖️ Lawyer Onboarding</div>
+      <p>At launch, are lawyers dummy profiles only? Or do you have real lawyers ready to list? If real, we need a lawyer CMS + verification flow from Phase 1.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🌍 Languages at Launch</div>
+      <p>Which 3–4 languages to prioritise for MVP? Suggested: English, Hindi, Tamil, Telugu. Others can be added post-launch.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📄 Legal Review</div>
+      <p>Has a lawyer reviewed the disclaimer language? This is important before you go live with legal information being served to real users.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>FirstReport</span> · Project Blueprint v1.0 · Prepared for Review · Next.js + Supabase + Claude
+</div>
+
+</body>
+</html>

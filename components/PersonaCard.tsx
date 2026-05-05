@@ -25,34 +25,40 @@ export default function PersonaCard({ persona, selected, onSelect, lang }: Perso
       onClick={onSelect}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(); } }}
       className={`
-        group/card relative w-full text-left p-6 rounded-md cursor-pointer select-none
-        border transition-all duration-200 ease-out
+        group/card relative w-full text-left p-6 rounded-sm cursor-pointer select-none
+        border transition-all duration-500 ease-in-out
         ${selected
-          ? 'bg-navy text-white border-navy shadow-md'
-          : 'bg-white text-navy border-cool-gray/60 hover:shadow-md hover:border-teal/40'}
+          ? 'text-white border-transparent shadow-md'
+          : 'bg-white text-navy-deep border-cool-gray hover:shadow-lift hover:border-teal/50 hover:-translate-y-0.5'}
       `}
+      style={selected ? { background: 'linear-gradient(135deg, #0F1F3D 0%, #1A2A44 100%)' } : {}}
     >
       {/* Section label + selected badge */}
       <div className="flex items-center justify-between mb-4">
-        <span className={`section-label ${selected ? 'text-white/60' : ''}`}>
+        {/* Use inline style to defeat CSS specificity of .section-label global color rule */}
+        <span
+          className="section-label"
+          style={{ color: selected ? 'rgba(255,255,255,0.65)' : undefined }}
+        >
           {personaSectionLabel(persona.id)}
         </span>
         {selected && (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-teal/20 text-teal text-[10px] font-semibold rounded-full tracking-wide uppercase">
-            ✓ Selected
-          </span>
+          <span className="citation-chip citation-chip-dark">Selected</span>
         )}
       </div>
 
       {/* Title row + speaker (stop propagation so click on speaker doesn't select card) */}
       <div className="flex items-start gap-2 mb-2">
-        <h3 className={`font-serif text-2xl sm:text-3xl font-bold leading-tight tracking-tight flex-1 ${selected ? 'text-white' : 'text-navy'}`}>
+        <h3
+          className="font-serif text-2xl sm:text-3xl font-bold leading-tight tracking-tight flex-1"
+          style={{ color: selected ? '#ffffff' : '#0F1F3D' }}
+        >
           {title}
         </h3>
         <span
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
-          className={`shrink-0 mt-1 transition-opacity duration-150 ${selected ? 'opacity-100' : 'opacity-0 group/card-hover:opacity-100'}`}
+          className={`shrink-0 mt-1 transition-opacity duration-150 ${selected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
         >
           <SpeakerButton
             text={`${title}. ${sub}`}

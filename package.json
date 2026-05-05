@@ -10,7 +10,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
-    "python:dev": "cd backend && uvicorn main:app --reload --port 8000",
+    "python:dev": "source venv/bin/activate && uvicorn backend.main:app --reload --port 8000",
     "dev:all": "concurrently \"npm run dev\" \"npm run python:dev\""
   },
   "dependencies": {

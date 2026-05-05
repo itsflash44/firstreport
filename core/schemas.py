@@ -45,6 +45,25 @@ class OfficerInfo(BaseModel):
     source: str = Field(default="voice", description="'voice', 'photo', or 'default'")
 
 
+class DocumentChecklistItem(BaseModel):
+    """One required document for a BNSS offense, with Hindi + English labels."""
+    name_hindi: str = Field(..., description="Document name in Hindi")
+    name_english: str = Field(..., description="Document name in English")
+    is_present: bool = Field(False, description="Whether the user has this document already")
+    importance: str = Field("required", description="'required' or 'recommended'")
+    tip_hindi: Optional[str] = Field(None, description="Short tip for obtaining this document")
+
+
+class LegalDocumentVerification(BaseModel):
+    """Result of Gemma verifying required supporting documents for a BNSS offense."""
+    bnss_section: str = Field(..., description="BNSS section being evaluated")
+    offense_name_hindi: str = Field(..., description="Offense name in Hindi")
+    required_docs: list[DocumentChecklistItem] = Field(default_factory=list)
+    missing_count: int = Field(0, description="Number of required docs missing")
+    summary_hindi: str = Field(..., description="One-sentence summary in Hindi of what's missing")
+    summary_english: str = Field(..., description="One-sentence summary in English of what's missing")
+
+
 class AuthorityContact(BaseModel):
     """Contact details for an escalation authority."""
     title: str = Field(..., description="Authority title, e.g., 'Superintendent of Police'")

@@ -212,7 +212,7 @@ export default function SettingsDrawer({ open, onClose, currentLang, onLangChang
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded text-secondary hover:text-navy hover:bg-off-white transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded text-secondary hover:text-navy hover:bg-ivory transition-colors"
             aria-label="Close"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -256,7 +256,7 @@ export default function SettingsDrawer({ open, onClose, currentLang, onLangChang
                       ? 'bg-error text-white border-error scale-105'
                       : isTranscribing
                       ? 'bg-cool-gray text-muted border-cool-gray animate-pulse'
-                      : 'bg-off-white text-secondary border-cool-gray hover:border-teal hover:text-teal'}`}
+                      : 'bg-ivory text-secondary border-cool-gray hover:border-teal hover:text-teal'}`}
                 >
                   {isTranscribing ? (
                     <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -302,7 +302,7 @@ export default function SettingsDrawer({ open, onClose, currentLang, onLangChang
             </div>
 
             {/* Mic test card */}
-            <div className="mt-4 p-4 bg-off-white rounded-md border border-cool-gray">
+            <div className="mt-4 p-4 bg-ivory rounded-md border border-cool-gray">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
@@ -484,7 +484,7 @@ function ToggleRow({
   value: boolean; onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between p-4 bg-off-white rounded-md border border-cool-gray">
+    <div className="flex items-center justify-between p-4 bg-ivory rounded-md border border-cool-gray">
       <div className="flex-1 min-w-0 mr-4">
         <div className="flex items-center gap-2 mb-0.5">
           <span className="text-sm font-semibold text-navy">{label}</span>

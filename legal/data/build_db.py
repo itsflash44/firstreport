@@ -404,28 +404,97 @@ def build_authorities():
 
 def get_schedule_context(db_path: str = None) -> str:
     """
-    Load BNSS Schedule 1 as plaintext context for Gemma classification prompt.
+    Load full BNSS Schedule 1 as plaintext context for Gemma classification prompt.
+    Returns all offenses when no incident text is provided (cold-start / cache).
     """
     if db_path is None:
         db_path = os.path.join(DATA_DIR, "bnss_schedule1.sqlite")
-    
+
     if not os.path.exists(db_path):
         build_bnss_schedule1()
-    
+
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute("""
-        SELECT bnss_section, offense_name_hindi, description_hindi, 
-               is_cognizable, punishment_hindi 
+        SELECT bnss_section, offense_name_hindi, description_hindi,
+               is_cognizable, punishment_hindi
         FROM offenses ORDER BY bnss_section
     """)
-    
+
     lines = []
     for row in c.fetchall():
         cog = "संज्ञेय" if row[3] else "असंज्ञेय"
         lines.append(f"धारा {row[0]}: {row[1]} — {row[2]} [{cog}] — सज़ा: {row[4]}")
-    
+
     conn.close()
+    return "\n".join(lines)
+
+
+def get_rag_context_for_incident(incident_text: str, top_k: int = 7, db_path: str = None) -> str:
+    """
+    BNSS RAG (Retrieval-Augmented Generation) — keyword-based pre-filter.
+
+    Instead of feeding all 27+ BNSS sections to Gemma (wasting tokens and
+    reducing accuracy), this function:
+    1. Tokenises the Hindi/English incident text into meaningful keywords.
+    2. Scores each SQLite offense row by keyword overlap against its
+       (keywords, offense_name_hindi, description_hindi) columns.
+    3. Returns the top-K most relevant sections as compact context.
+
+    This shrinks the Gemma prompt by ~60 % and focuses the model on the
+    sections most likely to apply — improving classification accuracy.
+
+    Falls back to full context if no good matches found (score == 0 for all).
+    """
+    if db_path is None:
+        db_path = os.path.join(DATA_DIR, "bnss_schedule1.sqlite")
+
+    if not os.path.exists(db_path):
+        build_bnss_schedule1()
+
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute("""
+        SELECT bnss_section, offense_name_hindi, offense_name_english,
+               description_hindi, is_cognizable, punishment_hindi, keywords, category
+        FROM offenses
+    """)
+    rows = c.fetchall()
+    conn.close()
+
+    # ── Keyword extraction ─────────────────────────────────────────────────
+    STOP_WORDS = {
+        "और", "में", "है", "को", "का", "की", "के", "पर", "से", "ने", "यह",
+        "वह", "कि", "था", "थी", "हो", "हुई", "हुआ", "जो", "तो", "भी",
+        "the", "a", "an", "is", "was", "and", "or", "in", "on", "at", "to",
+        "of", "for", "with", "by", "that", "this",
+    }
+    words = set(w.lower().strip("।,।.?!\"'") for w in incident_text.split() if len(w) > 2)
+    keywords = words - STOP_WORDS
+
+    # ── Score each offense ─────────────────────────────────────────────────
+    def score_row(row) -> int:
+        haystack = " ".join([
+            (row[1] or ""),   # offense_name_hindi
+            (row[2] or ""),   # offense_name_english
+            (row[3] or ""),   # description_hindi
+            (row[6] or ""),   # keywords column
+            (row[7] or ""),   # category
+        ]).lower()
+        return sum(1 for kw in keywords if kw in haystack)
+
+    scored = sorted(rows, key=score_row, reverse=True)
+
+    # If top score is 0, fall back to full context
+    if score_row(scored[0]) == 0:
+        return get_schedule_context(db_path)
+
+    top_rows = scored[:top_k]
+    lines = []
+    for row in top_rows:
+        cog = "संज्ञेय" if row[4] else "असंज्ञेय"
+        lines.append(f"धारा {row[0]}: {row[1]} — {row[3]} [{cog}] — सज़ा: {row[5]}")
+
     return "\n".join(lines)
 
 

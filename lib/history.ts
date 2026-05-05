@@ -25,6 +25,7 @@ export interface HistoryEntry {
   severity: Severity;
   bnssSection?: string;        // populated after classification, optional
   transcript?: ChatTurn[];     // full turn-by-turn conversation
+  sessionId?: string;          // PDF session ID — linked after document generation
 }
 
 const KEY         = 'firstreport_history';
@@ -51,7 +52,23 @@ export function logHistoryEntry(
   } catch {
     /* localStorage full or disabled */
   }
+  // Fire-and-forget sync to DB — never blocks the UI
+  syncToServer(entry).catch(() => {});
   return entry;
+}
+
+/** Sync a history entry to the server DB. Non-blocking — call without await. */
+export async function syncToServer(entry: HistoryEntry): Promise<void> {
+  if (typeof window === 'undefined') return;
+  try {
+    await fetch('/api/history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry),
+    });
+  } catch {
+    /* best-effort — localStorage is the ground truth */
+  }
 }
 
 export function readHistory(): HistoryEntry[] {
@@ -75,4 +92,26 @@ export function deleteHistoryEntry(id: string): void {
 export function clearHistory(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(KEY);
+}
+
+/**
+ * Link a PDF session_id to the most recent history entry.
+ * Called from the documents page after successful PDF generation.
+ */
+export function linkSessionToHistory(sessionId: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const list = readHistory();
+    if (!list.length) return;
+    // Update the most recent entry (index 0) with the sessionId
+    list[0] = { ...list[0], sessionId };
+    localStorage.setItem(KEY, JSON.stringify(list));
+  } catch {
+    /* localStorage full or disabled */
+  }
+}
+
+export function getHistoryEntry(id: string): HistoryEntry | null {
+  const list = readHistory();
+  return list.find((e) => e.id === id) ?? null;
 }

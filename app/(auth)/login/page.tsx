@@ -35,12 +35,25 @@ export default function LoginPage() {
 
   const handleGoogle = async () => {
     setLoading(true);
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/home` },
-    });
-    if (authError) {
-      setError('Google लॉगिन में समस्या हुई।');
+    setError('');
+    try {
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/home`,
+          queryParams: { access_type: 'offline', prompt: 'consent' },
+        },
+      });
+      if (authError) {
+        if (authError.message?.toLowerCase().includes('provider') || authError.message?.toLowerCase().includes('not enabled')) {
+          setError('__GOOGLE_NOT_CONFIGURED__');
+        } else {
+          setError('Google लॉगिन में समस्या हुई। कृपया OTP से लॉगिन करें।');
+        }
+        setLoading(false);
+      }
+    } catch {
+      setError('Google लॉगिन उपलब्ध नहीं। OTP से लॉगिन करें।');
       setLoading(false);
     }
   };
@@ -141,8 +154,16 @@ export default function LoginPage() {
               <button
                 id="demo-mode-btn"
                 onClick={() => {
-                  sessionStorage.setItem('training_optout', String(optOut));
-                  router.push('/home');
+                  // Pre-fill Sunita Devi demo scenario and skip directly to chat
+                  sessionStorage.setItem('training_optout',  String(optOut));
+                  sessionStorage.setItem('demo_mode',        'true');
+                  sessionStorage.setItem('language',         'hi-IN');
+                  sessionStorage.setItem('persona',          'women_dv');
+                  sessionStorage.setItem('intake_severity',  '2');
+                  sessionStorage.setItem('incident_summary',
+                    'सुनीता देवी, 38 वर्ष, घरेलू सहायिका, गाज़ियाबाद। पड़ोसी ने अलमारी से पैसे चुराए। गोविंदपुरम थाने ने FIR दर्ज करने से मना कर दिया।'
+                  );
+                  router.push('/chat?lang=hi-IN&persona=women_dv&demo=true');
                 }}
                 className="w-full py-3 text-sm font-semibold bg-cool-gray text-navy rounded hover:bg-neutral-200 transition-colors"
               >
@@ -174,11 +195,26 @@ export default function LoginPage() {
                 Google
               </button>
 
-              {error && (
+              {error === '__GOOGLE_NOT_CONFIGURED__' ? (
+                <div className="px-4 py-4 bg-amber-50 border border-amber-200 rounded-md space-y-2">
+                  <p className="text-sm font-semibold text-amber-800">⚙️ Google login needs one-time setup</p>
+                  <ol className="text-xs text-amber-700 space-y-1 list-decimal list-inside leading-relaxed">
+                    <li>Open <strong>Supabase Dashboard → Authentication → Providers</strong></li>
+                    <li>Enable <strong>Google</strong> provider</li>
+                    <li>Add Google OAuth Client ID + Secret from <strong>console.cloud.google.com</strong></li>
+                    <li>Set Authorized redirect URI to:<br />
+                      <code className="bg-amber-100 px-1 py-0.5 rounded text-[10px] break-all">
+                        https://lrjsehyaownymovryeru.supabase.co/auth/v1/callback
+                      </code>
+                    </li>
+                  </ol>
+                  <p className="text-xs text-amber-600 font-medium">Until then, use Phone OTP or Demo Mode above ↑</p>
+                </div>
+              ) : error ? (
                 <div className="px-4 py-3 bg-error/10 border border-error/20 text-error text-sm rounded font-medium">
                   {error}
                 </div>
-              )}
+              ) : null}
 
               <label className="flex items-start gap-3 pt-2 cursor-pointer">
                 <input

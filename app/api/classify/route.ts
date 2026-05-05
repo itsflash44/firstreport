@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { saveClassification } from '@/lib/db/sessions';
 
 const PYTHON_URL = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
 
 /**
  * POST /api/classify — Proxies incident summary to Python for BNSS classification.
+ * Persists the result to Supabase via Prisma.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -19,11 +21,36 @@ export async function POST(req: NextRequest) {
     });
 
     const data = await res.json();
-    return NextResponse.json(data);
+
+    // ── DB: persist classification ────────────────────────────────────────────
+    const sessionId: string = body.sessionId || '';
+    if (sessionId && data.success && data.classification) {
+      const c = data.classification;
+      await saveClassification(sessionId, {
+        bnssSection:      c.bnss_section ?? c.bnssSection ?? '',
+        offenseName:      c.offense_name ?? c.offenseName ?? '',
+        offenseNameHindi: c.offense_name_hindi ?? c.offenseNameHindi ?? '',
+        isCognizable:     c.is_cognizable ?? c.isCognizable ?? false,
+        confidence:       mapConfidence(c.confidence),
+        rationaleHindi:   c.rationale_hindi ?? c.rationaleHindi ?? '',
+        punishment:       c.punishment ?? null,
+        multipleSections: c.multiple_sections ?? c.multipleSections ?? [],
+      });
+    }
+
+    return NextResponse.json({ ...data, sessionId });
   } catch {
     return NextResponse.json(
       { success: false, error: 'Classification failed' },
-      { status: 503 }
+      { status: 503 },
     );
   }
+}
+
+function mapConfidence(raw: string | undefined): 'HIGH' | 'MEDIUM' | 'LOW' {
+  if (!raw) return 'MEDIUM';
+  const up = raw.toUpperCase();
+  if (up === 'HIGH') return 'HIGH';
+  if (up === 'LOW') return 'LOW';
+  return 'MEDIUM';
 }

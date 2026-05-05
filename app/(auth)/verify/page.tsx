@@ -26,14 +26,8 @@ function VerifyContent() {
       setLoading(false);
       return;
     }
-    try {
-      const optOut = sessionStorage.getItem('training_optout') === 'true';
-      await fetch('/api/user/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, trainingConsent: !optOut }),
-      });
-    } catch { /* best-effort */ }
+    // Sync Supabase Auth user to Prisma User table (non-blocking)
+    fetch('/api/auth/sync-user', { method: 'POST' }).catch(() => {});
     router.push('/home');
   }, [otp, phone, router, supabase]);
 

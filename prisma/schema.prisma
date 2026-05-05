@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id                String    @id @default(uuid())
+  id                String    @id
   phone             String?   @unique
   email             String?   @unique
   name              String?
@@ -22,19 +22,19 @@ model User {
 model Session {
   id                       String        @id @default(uuid())
   userId                   String
-  user                     User          @relation(fields: [userId], references: [id])
   language                 String
-  rawTranscriptJson        String        // AES-256-CBC encrypted JSON string
+  rawTranscriptJson        String
   incidentSummary          String
   bnssSection              String?
-  offenseType              String?       // "Cognizable" | "Non-Cognizable"
+  offenseType              String?
   classificationConfidence Float?
   entitiesJson             Json?
-  documentsJson            Json?         // Supabase Storage paths
+  documentsJson            Json?
   status                   SessionStatus @default(DRAFT)
   consentGiven             Boolean       @default(false)
   createdAt                DateTime      @default(now())
   updatedAt                DateTime      @updatedAt
+  user                     User          @relation(fields: [userId], references: [id])
 }
 
 model OfflineQueue {

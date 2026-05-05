@@ -67,7 +67,7 @@ export default function LanguageSwitcher({ current, onChange, compact = false }:
                      w-64 max-h-[70vh] overflow-y-auto"
         >
           {/* Header */}
-          <div className="px-3 py-2 border-b border-cool-gray bg-off-white">
+          <div className="px-3 py-2 border-b border-cool-gray bg-ivory">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-secondary">
               {uiStr('changeLanguage', current)}
             </span>
@@ -91,7 +91,7 @@ export default function LanguageSwitcher({ current, onChange, compact = false }:
                       cursor-pointer select-none transition-colors duration-100
                       ${active
                         ? 'bg-navy text-white'
-                        : 'text-navy hover:bg-off-white hover:text-navy'}
+                        : 'text-navy hover:bg-ivory hover:text-navy'}
                     `}
                   >
                     <span className="flex items-center gap-2.5 min-w-0 pointer-events-none">

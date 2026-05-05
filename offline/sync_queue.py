@@ -16,16 +16,81 @@ import requests
 from datetime import datetime
 
 from offline.network_check import is_offline, OFFLINE_MODE
+from backend.supabase_client import get_supabase
 
 logger = logging.getLogger(__name__)
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
-# In-memory send queue
+# In-memory send queue (loaded from Supabase on startup)
 _send_queue = []
 _retry_thread = None
 _retry_running = False
+
+
+def _persist_queue_item(item: dict) -> str | None:
+    """Save a queue item to Supabase OfflineQueue table. Returns the row id."""
+    try:
+        sb = get_supabase()
+        if sb is None:
+            return None
+        result = sb.table("OfflineQueue").insert({
+            "sessionId": item.get("session_id", "unknown"),
+            "payload": {
+                "filename": item["filename"],
+                "caption": item.get("caption", ""),
+                "chatId": item.get("chat_id", TELEGRAM_CHAT_ID),
+            },
+            "status": "PENDING",
+            "retryCount": 0,
+        }).execute()
+        if result.data:
+            return result.data[0].get("id")
+    except Exception as e:
+        logger.warning(f"Failed to persist queue item to Supabase: {e}")
+    return None
+
+
+def _mark_queue_item_sent(supabase_id: str):
+    """Update OfflineQueue row status to SENT."""
+    try:
+        sb = get_supabase()
+        if sb and supabase_id:
+            sb.table("OfflineQueue").update({"status": "SENT"}).eq("id", supabase_id).execute()
+    except Exception as e:
+        logger.warning(f"Failed to mark queue item sent in Supabase: {e}")
+
+
+def load_pending_from_supabase():
+    """
+    On startup: load any PENDING OfflineQueue rows from Supabase into memory.
+    This ensures the retry worker picks up items that survived a server restart.
+    """
+    try:
+        sb = get_supabase()
+        if sb is None:
+            return
+        result = sb.table("OfflineQueue").select("*").eq("status", "PENDING").execute()
+        loaded = 0
+        for row in (result.data or []):
+            payload = row.get("payload", {})
+            if isinstance(payload, str):
+                payload = json.loads(payload)
+            _send_queue.append({
+                "filename": payload.get("filename", "document.pdf"),
+                "caption": payload.get("caption", ""),
+                "chat_id": payload.get("chatId", TELEGRAM_CHAT_ID),
+                "pdf_bytes": None,  # bytes not stored in Supabase — will skip if None
+                "queued_at": row.get("createdAt", datetime.now().isoformat()),
+                "retries": row.get("retryCount", 0),
+                "supabase_id": row.get("id"),
+            })
+            loaded += 1
+        if loaded:
+            logger.info(f"Loaded {loaded} pending items from Supabase queue")
+    except Exception as e:
+        logger.warning(f"Could not load pending queue from Supabase: {e}")
 
 
 def send_document_telegram(
@@ -140,16 +205,22 @@ def send_all_documents(
     return results
 
 
-def _queue_send(pdf_bytes: bytes, filename: str, caption: str, chat_id: str):
-    """Add a send to the retry queue."""
-    _send_queue.append({
+def _queue_send(pdf_bytes: bytes, filename: str, caption: str, chat_id: str,
+                session_id: str = "unknown"):
+    """Add a send to the retry queue and persist to Supabase."""
+    item = {
         "pdf_bytes": pdf_bytes,
         "filename": filename,
         "caption": caption,
         "chat_id": chat_id,
+        "session_id": session_id,
         "queued_at": datetime.now().isoformat(),
         "retries": 0,
-    })
+        "supabase_id": None,
+    }
+    # Persist to Supabase for restart survivability
+    item["supabase_id"] = _persist_queue_item(item)
+    _send_queue.append(item)
     logger.info(f"Queued for retry: {filename} (queue size: {len(_send_queue)})")
 
 

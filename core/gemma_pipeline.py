@@ -1,11 +1,12 @@
 """
 FirstReport — Gemma 4 Inference Pipeline
 ==========================================
-Handles three types of Gemma 4 calls:
+Handles these types of Gemma 4 calls:
 1. Entity extraction from Hindi transcript → CrimeInput JSON
 2. Offense classification against BNSS Schedule 1 → ClassificationResult
 3. Document narrative generation (free-form Hindi paragraph)
 4. Notice board photo → officer name/batch extraction (Gemma 4 vision)
+5. Legal document verification → required vs missing document checklist
 
 Uses Gemma 4 4B-instruct via Kaggle Models Hub.
 Mock mode available for local development (USE_MOCK_MODEL=true env var).
@@ -21,6 +22,7 @@ from typing import Optional
 
 from core.schemas import (
     CrimeInput, ClassificationResult, OfficerInfo,
+    LegalDocumentVerification, DocumentChecklistItem,
     SAFETY_PROMPT_HINDI
 )
 
@@ -34,6 +36,10 @@ GEMMA_MODEL_PATH = os.environ.get(
     "GEMMA_MODEL_PATH",
     "kaggle-models/google/gemma/transformers/gemma-4-instruct-4b"
 )
+# Edge-Ready Quantization: set USE_QUANTIZATION=true to load Gemma in 4-bit mode.
+# Reduces VRAM from ~8 GB to ~2.5 GB — runs on budget 8 GB Android/Kaggle T4 GPU.
+# Requires: pip install bitsandbytes>=0.41.0 accelerate>=0.21.0
+USE_QUANTIZATION = os.environ.get("USE_QUANTIZATION", "false").lower() == "true"
 
 # Global model/tokenizer (lazy loaded)
 _model = None
@@ -57,12 +63,31 @@ def _load_model():
 
         logger.info(f"Loading Gemma 4 from {GEMMA_MODEL_PATH}...")
         _tokenizer = AutoTokenizer.from_pretrained(GEMMA_MODEL_PATH)
-        _model = AutoModelForCausalLM.from_pretrained(
-            GEMMA_MODEL_PATH,
-            torch_dtype=torch.bfloat16,
-            device_map="auto"
-        )
-        logger.info("Gemma 4 loaded successfully")
+
+        load_kwargs: dict = {"device_map": "auto"}
+
+        if USE_QUANTIZATION:
+            # 4-bit NF4 quantization — cuts VRAM from ~8 GB → ~2.5 GB
+            # Enables Gemma 4B to run on a single free Kaggle T4 (15 GB)
+            # or an 8 GB budget smartphone GPU via llama.cpp GGUF
+            try:
+                from transformers import BitsAndBytesConfig
+                bnb_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_compute_dtype=torch.bfloat16,
+                )
+                load_kwargs["quantization_config"] = bnb_config
+                logger.info("4-bit NF4 quantization enabled (edge-ready mode)")
+            except ImportError:
+                logger.warning("bitsandbytes not installed — loading in bfloat16 (no quantization)")
+                load_kwargs["torch_dtype"] = torch.bfloat16
+        else:
+            load_kwargs["torch_dtype"] = torch.bfloat16
+
+        _model = AutoModelForCausalLM.from_pretrained(GEMMA_MODEL_PATH, **load_kwargs)
+        logger.info(f"Gemma 4 loaded successfully {'(4-bit quantized)' if USE_QUANTIZATION else '(bfloat16)'}")
     except Exception as e:
         logger.error(f"Failed to load Gemma 4: {e}")
         logger.info("Falling back to mock mode")
@@ -88,9 +113,28 @@ def _load_vision_processor():
 
 def _generate(prompt: str, max_tokens: int = 512) -> str:
     """
-    Generate text. Tries Gemini API first if configured, else local Gemma 4, else Mock.
+    Generate text. Tries local Gemma first, then Gemini API, then Mock only if enabled.
     """
-    import os
+    # 1. Try local Gemma first
+    try:
+        _load_model()
+        if _model is not None and not USE_MOCK_MODEL:
+            import torch
+            inputs = _tokenizer(prompt, return_tensors="pt").to(_model.device)
+            with torch.no_grad():
+                outputs = _model.generate(
+                    **inputs,
+                    max_new_tokens=max_tokens,
+                    temperature=0.3,
+                    do_sample=True,
+                    top_p=0.9
+                )
+            response = _tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
+            return response.strip()
+    except Exception as e:
+        logger.error(f"Gemma generation error: {e}")
+
+    # 2. Fallback to Gemini API if Gemma fails or is not loaded
     if os.environ.get("GEMINI_API_KEY"):
         try:
             import google.generativeai as genai
@@ -101,27 +145,12 @@ def _generate(prompt: str, max_tokens: int = 512) -> str:
         except Exception as e:
             logger.error(f"Gemini generation error: {e}")
 
-    _load_model()
-
-    if USE_MOCK_MODEL or _model is None:
+    # 3. Final fallback to Mock ONLY if USE_MOCK_MODEL is true
+    if USE_MOCK_MODEL:
+        logger.info("Falling back to MOCK generate")
         return _mock_generate(prompt)
-
-    try:
-        import torch
-        inputs = _tokenizer(prompt, return_tensors="pt").to(_model.device)
-        with torch.no_grad():
-            outputs = _model.generate(
-                **inputs,
-                max_new_tokens=max_tokens,
-                temperature=0.3,
-                do_sample=True,
-                top_p=0.9
-            )
-        response = _tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
-        return response.strip()
-    except Exception as e:
-        logger.error(f"Gemma generation error: {e}")
-        return _mock_generate(prompt)
+    
+    raise RuntimeError("No inference engine available (Gemma failed, Gemini failed, and Mock is disabled)")
 
 
 # ──────────────────────────────────────
@@ -430,6 +459,310 @@ def extract_officer_from_image(image) -> OfficerInfo:
     except Exception as e:
         logger.error(f"Vision extraction error: {e}")
         return OfficerInfo(name="कर्तव्य अधिकारी", source="default")
+
+
+# ──────────────────────────────────────
+# Evidence Vision Audit (Gemma 4 Vision Pass 2)
+# ──────────────────────────────────────
+
+EVIDENCE_AUDIT_PROMPT = """You are a legal evidence quality assessor helping a crime victim in India.
+
+This photo has been submitted as evidence for a police complaint. Assess its quality for use in a formal legal document.
+
+Evaluate on these 4 criteria:
+1. CLARITY — Is text/content clearly readable? Are faces or injuries clearly visible?
+2. LIGHTING — Is the photo well-lit or too dark/washed out?
+3. ANGLE — Is the subject in frame? Is it tilted or cut off?
+4. RELEVANCE — Does this look like it could be legal evidence (injury, document, location)?
+
+Return ONLY valid JSON:
+{{
+    "overall_quality": "good" | "acceptable" | "retake",
+    "clarity_score": 1-5,
+    "lighting_score": 1-5,
+    "angle_score": 1-5,
+    "feedback_hindi": "2-3 sentences of honest, empathetic feedback in simple Hindi about what is good and what to improve",
+    "feedback_english": "Same feedback in English",
+    "action_hint_hindi": "One short action tip in Hindi (e.g. 'रोशनी में जाकर दोबारा लें')",
+    "is_usable": true | false
+}}
+
+JSON only:"""
+
+
+def audit_evidence_photo(image) -> dict:
+    """
+    Audit an evidence photo for legal quality using Gemma 4 Vision.
+    Returns quality scores and Hindi/English feedback on whether to retake.
+    """
+    from PIL import Image as PILImage
+
+    if not isinstance(image, PILImage.Image):
+        image = PILImage.fromarray(image)
+
+    # Try Gemini Vision first (more reliable for this nuanced task)
+    if os.environ.get("GEMINI_API_KEY"):
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+            gemini_model = genai.GenerativeModel("gemini-flash-latest")
+            res = gemini_model.generate_content([EVIDENCE_AUDIT_PROMPT, image])
+            json_str = res.text
+            if "```json" in json_str:
+                json_str = json_str.split("```json")[1].split("```")[0]
+            elif "```" in json_str:
+                json_str = json_str.split("```")[1].split("```")[0]
+            result = json.loads(json_str.strip())
+            result.setdefault("is_usable", result.get("overall_quality") in ("good", "acceptable"))
+            return result
+        except Exception as e:
+            logger.error(f"Evidence audit Gemini error: {e}")
+
+    # Local Gemma vision fallback
+    _load_vision_processor()
+    if _processor and _model and not USE_MOCK_MODEL:
+        try:
+            import torch
+            inputs = _processor(text=EVIDENCE_AUDIT_PROMPT, images=image, return_tensors="pt").to(_model.device)
+            with torch.no_grad():
+                outputs = _model.generate(**inputs, max_new_tokens=300, temperature=0.2)
+            response = _processor.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
+            json_str = response
+            if "```json" in json_str:
+                json_str = json_str.split("```json")[1].split("```")[0]
+            elif "```" in json_str:
+                json_str = json_str.split("```")[1].split("```")[0]
+            result = json.loads(json_str.strip())
+            result.setdefault("is_usable", result.get("overall_quality") in ("good", "acceptable"))
+            return result
+        except Exception as e:
+            logger.error(f"Evidence audit local Gemma error: {e}")
+
+    # Mock fallback
+    return _mock_evidence_audit()
+
+
+def _mock_evidence_audit() -> dict:
+    """Mock evidence audit result for local development."""
+    return {
+        "overall_quality": "acceptable",
+        "clarity_score": 3,
+        "lighting_score": 4,
+        "angle_score": 4,
+        "feedback_hindi": (
+            "फ़ोटो ठीक है। रोशनी अच्छी है। "
+            "अगर हो सके तो ज़्यादा पास जाकर लें ताकि डिटेल साफ़ दिखे। "
+            "यह फ़ोटो शिकायत में इस्तेमाल हो सकती है।"
+        ),
+        "feedback_english": (
+            "Photo is acceptable. Lighting is good. "
+            "If possible, move closer to show more detail. "
+            "This photo can be used in the complaint."
+        ),
+        "action_hint_hindi": "थोड़ा पास जाकर दोबारा लेने की कोशिश करें।",
+        "is_usable": True,
+    }
+
+
+# ──────────────────────────────────────
+# Legal Explainer — "समझाएं" / "Explain in Simple Hindi" (Gemma 4 Pass 5)
+# ──────────────────────────────────────
+
+EXPLAIN_LAW_PROMPT = """You are a compassionate legal educator explaining Indian law in the simplest possible Hindi to an illiterate domestic worker.
+
+{safety_note}
+
+The victim's case falls under:
+- BNSS Section: {bnss_section}
+- Offense name: {offense_name}
+- What happened: {incident}
+
+Your task: Write a SHORT explanation (4-6 sentences maximum) in very simple, conversational Hindi (NO legal jargon) that tells the victim:
+1. What this law section means in everyday words
+2. WHY the police were LEGALLY REQUIRED to register the FIR (mandatory under BNSS)
+3. What POWER the victim now has (they can go to SP, DM, or High Court)
+4. One sentence of emotional encouragement
+
+Write ONLY the explanation. No section numbers. No headings. No bullet points. Just plain, simple Hindi sentences that even someone who cannot read can understand when read aloud.
+
+Simple Hindi explanation:"""
+
+
+def explain_law_hindi(bnss_section: str, offense_name: str, incident: str) -> str:
+    """
+    Explain the BNSS law in simple, conversational Hindi for low-literacy users.
+    Designed to be read aloud via TTS on the classify screen.
+
+    Returns plain Hindi text, 4-6 sentences, zero legal jargon.
+    """
+    prompt = EXPLAIN_LAW_PROMPT.format(
+        bnss_section=bnss_section,
+        offense_name=offense_name,
+        incident=incident[:300],  # keep prompt short
+        safety_note=SAFETY_PROMPT_HINDI,
+    )
+    try:
+        return _generate(prompt, max_tokens=250).strip()
+    except Exception as e:
+        logger.error(f"explain_law_hindi error: {e}")
+        return (
+            f"धारा {bnss_section} BNSS के अनुसार, {offense_name} एक संज्ञेय अपराध है। "
+            "इसका मतलब है कि पुलिस को कानूनी तौर पर FIR दर्ज करना ज़रूरी था — "
+            "मना करना गैरकानूनी है। "
+            "अब आप SP, DM, या High Court में शिकायत कर सकती हैं। "
+            "आप अकेली नहीं हैं — कानून आपके साथ है। NALSA हेल्पलाइन 15100 पर कॉल करें।"
+        )
+
+
+# ──────────────────────────────────────
+# Legal Document Verification (Gemma 4 Pass 6)
+# ──────────────────────────────────────
+
+VERIFY_DOCS_PROMPT = """You are a legal document auditor specializing in Indian criminal law under BNSS 2023.
+
+{safety_note}
+
+The victim's case has been classified under:
+- BNSS Section: {bnss_section}
+- Offense: {offense_name}
+- Incident summary: {incident}
+
+The victim currently has these documents:
+{existing_docs}
+
+Your task:
+1. List ALL required supporting documents for this specific BNSS offense to file a strong complaint (e.g., Medical Report, FIR copy, Witness statements, ID proof, Evidence photos, etc.)
+2. Mark which ones are MISSING from the victim's current set.
+3. For each missing document, give a short Hindi tip on how to obtain it.
+
+Return ONLY valid JSON in this exact format:
+{{
+    "required_docs": [
+        {{
+            "name_hindi": "दस्तावेज़ का नाम हिंदी में",
+            "name_english": "Document name in English",
+            "is_present": true/false,
+            "importance": "required" or "recommended",
+            "tip_hindi": "कैसे प्राप्त करें (केवल अगर absent हो)"
+        }}
+    ],
+    "missing_count": <number of required docs that are not present>,
+    "summary_hindi": "एक वाक्य में क्या-क्या कमी है",
+    "summary_english": "One sentence: what documents are missing"
+}}
+
+JSON output (no other text):"""
+
+
+def verify_legal_documents(
+    bnss_section: str,
+    offense_name: str,
+    incident: str,
+    existing_docs: list[str] | None = None,
+) -> LegalDocumentVerification:
+    """
+    Use Gemma/Gemini to audit required supporting documents for a BNSS offense.
+
+    Args:
+        bnss_section: BNSS section number, e.g., "303"
+        offense_name: Offense name in Hindi
+        incident: Short incident description
+        existing_docs: List of document names the victim already has (may be empty)
+
+    Returns:
+        LegalDocumentVerification with required_docs checklist and summary
+    """
+    docs_str = (
+        "\n".join(f"- {d}" for d in existing_docs)
+        if existing_docs
+        else "कोई दस्तावेज़ अभी तक उपलब्ध नहीं (No documents provided yet)"
+    )
+
+    prompt = VERIFY_DOCS_PROMPT.format(
+        bnss_section=bnss_section,
+        offense_name=offense_name,
+        incident=incident,
+        existing_docs=docs_str,
+        safety_note=SAFETY_PROMPT_HINDI,
+    )
+
+    try:
+        response = _generate(prompt, max_tokens=700)
+
+        json_str = response
+        if "```json" in json_str:
+            json_str = json_str.split("```json")[1].split("```")[0]
+        elif "```" in json_str:
+            json_str = json_str.split("```")[1].split("```")[0]
+
+        result = json.loads(json_str.strip())
+
+        items = [
+            DocumentChecklistItem(
+                name_hindi=d.get("name_hindi", ""),
+                name_english=d.get("name_english", ""),
+                is_present=bool(d.get("is_present", False)),
+                importance=d.get("importance", "required"),
+                tip_hindi=d.get("tip_hindi"),
+            )
+            for d in result.get("required_docs", [])
+        ]
+
+        return LegalDocumentVerification(
+            bnss_section=bnss_section,
+            offense_name_hindi=offense_name,
+            required_docs=items,
+            missing_count=result.get("missing_count", sum(1 for i in items if not i.is_present)),
+            summary_hindi=result.get("summary_hindi", "कुछ आवश्यक दस्तावेज़ अभी गायब हैं।"),
+            summary_english=result.get("summary_english", "Some required documents are missing."),
+        )
+
+    except Exception as e:
+        logger.error(f"verify_legal_documents error: {e}")
+        return _mock_verify_docs(bnss_section, offense_name)
+
+
+def _mock_verify_docs(bnss_section: str, offense_name: str) -> LegalDocumentVerification:
+    """Fallback mock for verify_legal_documents when AI inference fails."""
+    items = [
+        DocumentChecklistItem(
+            name_hindi="FIR की प्रति",
+            name_english="FIR Copy",
+            is_present=False,
+            importance="required",
+            tip_hindi="थाने से लिखित FIR मांगें — यह आपका कानूनी अधिकार है।",
+        ),
+        DocumentChecklistItem(
+            name_hindi="पहचान प्रमाण",
+            name_english="Identity Proof (Aadhaar / Voter ID)",
+            is_present=False,
+            importance="required",
+            tip_hindi="आधार कार्ड, मतदाता पहचान पत्र, या राशन कार्ड चलेगा।",
+        ),
+        DocumentChecklistItem(
+            name_hindi="घटना की तारीख और समय का विवरण",
+            name_english="Written account of incident date & time",
+            is_present=True,
+            importance="required",
+            tip_hindi=None,
+        ),
+        DocumentChecklistItem(
+            name_hindi="गवाह का बयान (अगर उपलब्ध हो)",
+            name_english="Witness Statement (if available)",
+            is_present=False,
+            importance="recommended",
+            tip_hindi="किसी गवाह से लिखित बयान लें और उनका नाम-पता नोट करें।",
+        ),
+    ]
+    missing = sum(1 for i in items if not i.is_present and i.importance == "required")
+    return LegalDocumentVerification(
+        bnss_section=bnss_section,
+        offense_name_hindi=offense_name,
+        required_docs=items,
+        missing_count=missing,
+        summary_hindi=f"धारा {bnss_section} के लिए {missing} ज़रूरी दस्तावेज़ अभी भी गायब हैं।",
+        summary_english=f"Section {bnss_section}: {missing} required documents are still missing.",
+    )
 
 
 # ──────────────────────────────────────

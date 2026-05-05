@@ -22,11 +22,12 @@ export default function LanguageTile({ lang, selected, onSelect }: LanguageTileP
       className={`
         group relative flex flex-col justify-between cursor-pointer select-none
         h-28 sm:h-32 px-4 py-3 rounded-sm
-        border transition-all duration-150 ease-out
+        border transition-all duration-500 ease-in-out
         ${selected
-          ? 'bg-navy text-white border-navy shadow-md'
-          : 'bg-white text-navy border-cool-gray hover:border-teal hover:shadow-sm'}
+          ? 'text-white border-transparent shadow-md'
+          : 'bg-white text-navy-deep border-cool-gray hover:border-teal hover:shadow-sm hover:-translate-y-0.5'}
       `}
+      style={selected ? { background: 'linear-gradient(135deg, #0F1F3D 0%, #1A2A44 100%)' } : {}}
     >
       {/* Top row — ISO code (mono) + speaker + selected dot */}
       <div className="flex items-center justify-between">
@@ -51,7 +52,7 @@ export default function LanguageTile({ lang, selected, onSelect }: LanguageTileP
 
       {/* Native script — serif headline */}
       <div className="text-left">
-        <div className={`font-serif text-3xl sm:text-4xl leading-none tracking-tight truncate ${selected ? 'text-white' : 'text-navy'}`}>
+        <div className={`font-serif text-3xl sm:text-4xl leading-none tracking-tight truncate ${selected ? 'text-white' : 'text-navy-deep'}`}>
           {lang.label}
         </div>
         <div className={`font-sans text-[10px] tracking-[0.1em] uppercase mt-2 ${selected ? 'text-white/70' : 'text-muted'}`}>

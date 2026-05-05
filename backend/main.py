@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from dotenv import load_dotenv
+load_dotenv(Path(__file__).parent.parent / ".env.local")  # load .env.local first (has real keys)
 load_dotenv(Path(__file__).parent.parent / ".env")
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, BackgroundTasks
@@ -20,14 +21,23 @@ from pydantic import BaseModel
 
 from core.schemas import CrimeInput, OfficerInfo, ClassificationResult
 from core.sarvam_stt import transcribe_audio_bytes
-from core.gemma_pipeline import extract_entities, classify_offense, generate_narrative, extract_officer_from_image
+from core.gemma_pipeline import (
+    extract_entities, classify_offense, generate_narrative,
+    extract_officer_from_image, verify_legal_documents,
+    explain_law_hindi, audit_evidence_photo,
+)
 from core.entity_extractor import extract_crime_input
 from legal.bnss_classifier import classify_crime, get_classification_display
 from legal.escalation_chain import get_countdown_timers
 from legal.doc_generator import generate_all_documents
 from legal.data.build_db import lookup_authority, build_bnss_schedule1, build_authorities, get_schedule_context
 from offline.network_check import is_offline
-from offline.sync_queue import send_all_documents as telegram_send_all, get_queue_status
+from offline.sync_queue import (
+    send_all_documents as telegram_send_all,
+    get_queue_status,
+    load_pending_from_supabase,
+    start_retry_worker,
+)
 from offline.cache_manager import save_session
 
 logger = logging.getLogger(__name__)
@@ -41,6 +51,17 @@ except Exception:
     build_authorities()
 
 app = FastAPI(title="FirstReport API")
+
+
+@app.on_event("startup")
+async def on_startup():
+    """Load pending Telegram queue from Supabase so it survives server restarts."""
+    try:
+        load_pending_from_supabase()
+        start_retry_worker()
+        logger.info("Startup: Telegram queue loaded ✓")
+    except Exception as e:
+        logger.warning(f"Startup queue load failed: {e}")
 
 # ── Extended routes (sharing, TTS proxy, encryption, case history) ──────────
 try:
@@ -73,11 +94,23 @@ class DocRequest(BaseModel):
 class SendRequest(BaseModel):
     session_id: str
     victim_name: Optional[str] = "पीड़ित"
+    letter_type: Optional[str] = None  # "SP" | "DM" | "HC" | "OFFICER" — if set, send only this doc
 
 class ClarifyRequest(BaseModel):
     transcript: str
     history: Optional[list] = None
     lang_code: str = "hi-IN"
+
+class VerifyDocsRequest(BaseModel):
+    bnss_section: str
+    offense_name: str
+    incident: str
+    existing_docs: Optional[list] = None
+
+class ExplainLawRequest(BaseModel):
+    bnss_section: str
+    offense_name: str
+    incident: str
 
 
 @app.post("/api/transcribe")
@@ -157,6 +190,73 @@ async def process_officer(image: UploadFile = File(...)):
         logger.error(f"Error processing officer image: {e}")
         return {"success": False, "error": str(e)}
 
+@app.post("/api/audit-evidence")
+async def audit_evidence(image: UploadFile = File(...)):
+    """
+    Audit an evidence photo using Gemma 4 Vision.
+    Returns quality scores + Hindi feedback on whether to retake.
+    """
+    from PIL import Image
+    import io
+    image_bytes = await image.read()
+    try:
+        pil_image = Image.open(io.BytesIO(image_bytes))
+        result = audit_evidence_photo(pil_image)
+        return {"success": True, "audit": result}
+    except Exception as e:
+        logger.error(f"Evidence audit error: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": "Evidence audit failed"},
+        )
+
+
+@app.post("/api/explain-law")
+async def explain_law(req: ExplainLawRequest):
+    """
+    Explain a BNSS section in simple, conversational Hindi for TTS read-aloud.
+    Gemma 4 avoids all legal jargon — designed for illiterate / low-literacy users.
+    """
+    try:
+        explanation = explain_law_hindi(
+            bnss_section=req.bnss_section,
+            offense_name=req.offense_name,
+            incident=req.incident,
+        )
+        return {"success": True, "explanation": explanation}
+    except Exception as e:
+        logger.error(f"explain-law error: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": "Legal explanation unavailable"},
+        )
+
+
+@app.post("/api/verify-docs")
+async def verify_docs(req: VerifyDocsRequest):
+    """
+    Audit required supporting documents for a BNSS offense classification.
+    Returns a bilingual checklist of required vs missing documents.
+    """
+    try:
+        result = verify_legal_documents(
+            bnss_section=req.bnss_section,
+            offense_name=req.offense_name,
+            incident=req.incident,
+            existing_docs=req.existing_docs or [],
+        )
+        return {
+            "success": True,
+            "verification": result.model_dump(),
+        }
+    except Exception as e:
+        logger.error(f"verify-docs error: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": "Document verification failed"},
+        )
+
+
 @app.post("/api/generate-docs")
 async def generate_docs(req: DocRequest):
     crime_input = CrimeInput(**req.crime_input)
@@ -225,13 +325,26 @@ async def generate_docs(req: DocRequest):
 async def send_telegram(req: SendRequest):
     docs = {}
     output_dir = Path(__file__).parent.parent / "output"
-    
-    # Simple hack to find files for this session id
+
+    # Map frontend letter_type keys → PDF filename prefixes
+    LETTER_TYPE_MAP: Dict[str, str] = {
+        "SP":      "sp_complaint",
+        "DM":      "dm_petition",
+        "HC":      "hc_writ",
+        "OFFICER": "accountability_doc",
+    }
+
+    # Find files for this session id
     prefix = req.session_id[:8]
     files = list(output_dir.glob(f"*_{prefix}.pdf"))
-    
+
     for path in files:
         key = path.name.rsplit("_", 1)[0]
+        # If a specific letter_type is requested, only include that document
+        if req.letter_type:
+            expected_key = LETTER_TYPE_MAP.get(req.letter_type.upper())
+            if expected_key and key != expected_key:
+                continue
         try:
             docs[key] = path.read_bytes()
         except:

@@ -7,6 +7,7 @@ import SpeakerButton from '@/components/SpeakerButton';
 import FirstReportLogo from '@/components/FirstReportLogo';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { LANG_BY_CODE, type LangCode, type PersonaId, LEGAL_DISCLAIMER } from '@/lib/i18n';
+import { linkSessionToHistory } from '@/lib/history';
 
 const LETTER_TYPES = [
   { key: 'SP',      title: 'SP COMPLAINT',     subtitle: 'BNSS §173 / §175 — Police Superintendent', color: 'red'    as const, status: 'ready'  as const, unlockDays: 0  },
@@ -58,6 +59,9 @@ function DocumentsContent() {
       if (data.success) {
         setSessionId(data.session_id);
         setPdfs(data.paths || {});
+        // Link this sessionId to the most recent history entry so the session
+        // replay page can access the generated PDFs via signed URL.
+        linkSessionToHistory(data.session_id);
       }
     } catch {
       /* offline — queued */
@@ -65,36 +69,37 @@ function DocumentsContent() {
     setLoading(false);
   };
 
-  const handleDownload = async (letterType: string) => {
-    try {
-      const res = await fetch('/api/generate-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, letter_type: letterType, language }),
-      });
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `FirstReport_${letterType}_${sessionId.slice(0, 8)}.pdf`;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-    } catch {
-      flash('Download failed.');
-    }
+  // Bug 5 fix: open signed PDF URL in new tab for preview
+  const handlePreview = (letterType: string) => {
+    if (!sessionId) { flash('Documents not yet generated.'); return; }
+    window.open(`/api/documents/${sessionId}/${letterType.toLowerCase()}`, '_blank');
   };
 
+  // Bug 6 fix: open the already-generated PDF via signed URL instead of re-generating
+  const handleDownload = (letterType: string) => {
+    if (!sessionId) { flash('Documents not yet generated.'); return; }
+    window.open(`/api/documents/${sessionId}/${letterType.toLowerCase()}`, '_blank');
+  };
+
+  // Bug 4 fix: send ONLY the specific card's doc to Telegram using letter_type filter
   const handleShare = async (letterType: string) => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `FirstReport — ${letterType}`,
-          text: 'FirstReport AI-prepared legal document',
-          url: window.location.href,
-        });
-      } catch { /* user cancelled */ }
+    if (!sessionId) { flash('Documents not yet generated.'); return; }
+    try {
+      const res = await fetch('/api/send-telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionId,
+          victim_name: JSON.parse(sessionStorage.getItem('crime_input') || '{}').victim_name || 'Victim',
+          letter_type: letterType,
+        }),
+      });
+      const data = await res.json();
+      flash(data.success && data.all_sent
+        ? `✓ ${letterType} sent on Telegram`
+        : 'Queued offline — will send when online');
+    } catch {
+      flash('Queued offline — will send when online');
     }
   };
 
@@ -123,7 +128,7 @@ function DocumentsContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-off-white gap-5">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-ivory gap-5">
         <FirstReportLogo size={72} variant="icon" theme="light" />
         <p className="text-sm font-medium text-secondary">Preparing documents…</p>
         <div className="w-full max-w-md space-y-3 px-6">
@@ -136,7 +141,7 @@ function DocumentsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-off-white">
+    <div className="min-h-screen bg-ivory">
       {/* Section breadcrumb / lang bar */}
       <div className="bg-white border-b border-cool-gray">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
@@ -204,6 +209,7 @@ function DocumentsContent() {
               unlockDays={letter.unlockDays}
               color={letter.color}
               language={language}
+              onPreview={() => handlePreview(letter.key)}
               onDownload={() => handleDownload(letter.key)}
               onShare={() => handleShare(letter.key)}
             />
@@ -251,7 +257,7 @@ export default function DocumentsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-off-white">
+        <div className="min-h-screen flex items-center justify-center bg-ivory">
           <FirstReportLogo size={64} variant="icon" theme="light" />
         </div>
       }

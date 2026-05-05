@@ -28,8 +28,7 @@ function HistoryContent() {
     rawLang && (LANG_BY_CODE as Record<string, unknown>)[rawLang]
       ? (rawLang as LangCode) : 'hi-IN';
 
-  const [entries,    setEntries]    = useState<HistoryEntry[]>([]);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [entries, setEntries] = useState<HistoryEntry[]>([]);
 
   useEffect(() => {
     setEntries(readHistory());
@@ -41,7 +40,6 @@ function HistoryContent() {
   const handleDelete = (id: string) => {
     deleteHistoryEntry(id);
     setEntries(readHistory());
-    if (expandedId === id) setExpandedId(null);
   };
 
   const fmtDate = (ts: number) =>
@@ -51,7 +49,7 @@ function HistoryContent() {
     });
 
   return (
-    <div className="min-h-screen bg-off-white">
+    <div className="min-h-screen bg-ivory">
       {/* Top bar */}
       <div className="bg-white border-b border-cool-gray">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
@@ -97,8 +95,6 @@ function HistoryContent() {
               const langCfg   = LANG_BY_CODE[e.language];
               const severity  = SEVERITY_STYLE[e.severity] ?? SEVERITY_STYLE.normal;
               const borderCls = SEVERITY_BORDER[e.severity] ?? 'border-l-navy';
-              const isOpen    = expandedId === e.id;
-
               return (
                 <li key={e.id} className={`fr-card border-l-4 ${borderCls} overflow-hidden`}>
                   {/* Card header — always visible */}
@@ -133,21 +129,16 @@ function HistoryContent() {
                         <span className="font-mono text-xs text-teal font-semibold">BNSS § {e.bnssSection}</span>
                       )}
 
-                      {/* Expand transcript button — only if transcript exists */}
-                      {e.transcript && e.transcript.length > 0 && (
-                        <button
-                          onClick={() => setExpandedId(isOpen ? null : e.id)}
-                          className="flex items-center gap-1 text-xs font-semibold text-teal hover:text-navy transition-colors"
-                        >
-                          <svg
-                            className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-                            fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                          </svg>
-                          {isOpen ? 'Hide' : 'Full chat'}
-                        </button>
-                      )}
+                      {/* Navigate to full session replay */}
+                      <button
+                        onClick={() => router.push(`/sessions/${e.id}`)}
+                        className="flex items-center gap-1 text-xs font-semibold text-teal hover:text-navy transition-colors"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                        View session
+                      </button>
 
                       <button
                         onClick={() => handleDelete(e.id)}
@@ -161,38 +152,6 @@ function HistoryContent() {
                     </div>
                   </div>
 
-                  {/* Transcript panel — expanded */}
-                  {isOpen && e.transcript && (
-                    <div className="border-t border-cool-gray bg-off-white px-5 py-4 space-y-3 max-h-96 overflow-y-auto">
-                      <div className="text-[10px] font-mono uppercase tracking-[0.22em] text-secondary mb-3">
-                        Full conversation · {e.transcript.length} turns
-                      </div>
-                      {e.transcript.map((turn, idx) => (
-                        <div
-                          key={idx}
-                          className={`flex gap-2 ${turn.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                        >
-                          {turn.role === 'ai' && (
-                            <div className="shrink-0 w-6 h-6 rounded-sm bg-navy/10 flex items-center justify-center mt-0.5">
-                              <FirstReportLogo size={14} variant="icon" theme="light" />
-                            </div>
-                          )}
-                          <div className={`max-w-[80%] rounded-md px-3 py-2 text-sm leading-relaxed
-                            ${turn.role === 'user'
-                              ? 'bg-navy text-white'
-                              : 'bg-white border border-cool-gray text-navy'}`}
-                          >
-                            <p lang={e.language}>{turn.text}</p>
-                          </div>
-                          {turn.role === 'ai' && (
-                            <span className="shrink-0 mt-1">
-                              <SpeakerButton text={turn.text} language={e.language} variant="mini" />
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </li>
               );
             })}
@@ -206,7 +165,7 @@ function HistoryContent() {
 export default function HistoryPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-off-white">
+      <div className="min-h-screen flex items-center justify-center bg-ivory">
         <FirstReportLogo size={64} variant="icon" theme="light" />
       </div>
     }>
