@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { LANG_BY_CODE, type LangCode } from '@/lib/i18n';
-
-const PYTHON_URL = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
+import { sarvamSTT } from '@/lib/sarvam';
 
 /**
  * POST /api/stt — Proxy to Sarvam STT via Python backend.
@@ -13,6 +12,12 @@ const PYTHON_URL = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
+    
+    // Attempt to extract the file object
+    const file = formData.get('audio') || formData.get('file');
+    if (!file || typeof (file as Blob).arrayBuffer !== 'function') {
+      return NextResponse.json({ transcript: '', success: false, error: 'No audio file provided' }, { status: 400 });
+    }
 
     const raw = String(formData.get('language') ?? 'hi-IN');
     // Normalize browser BCP47 → Sarvam code
@@ -25,23 +30,13 @@ export async function POST(req: NextRequest) {
       ? (aliased as LangCode)
       : 'hi-IN';
 
-    formData.set('language', sarvamCode);
-    // Python FastAPI backend reads this as `lang_code: str = Form("hi-IN")`.
-    // The 'language' field above is kept for forward-compat; lang_code is what
-    // the backend actually uses — without it, Python silently defaulted to hi-IN
-    // for every language, making STT always run in Hindi mode.
-    formData.set('lang_code', sarvamCode);
-
-    const res = await fetch(`${PYTHON_URL}/api/transcribe`, {
-      method: 'POST',
-      body: formData,
-    });
-
-    const data = await res.json();
-    return NextResponse.json(data);
-  } catch {
+    // Call native Sarvam STT from TypeScript
+    const result = await sarvamSTT(file as Blob, sarvamCode);
+    
+    return NextResponse.json(result);
+  } catch (error: any) {
     return NextResponse.json(
-      { transcript: '', success: false, error: 'Backend unavailable' },
+      { transcript: '', success: false, error: error?.message || 'STT failed' },
       { status: 503 }
     );
   }

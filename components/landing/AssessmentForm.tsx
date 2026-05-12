@@ -4,13 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LANGUAGES, type LangCode } from '@/lib/i18n';
 import { PERSONAS, type PersonaSpec } from '@/lib/personas';
+import { createCase } from '@/lib/legalJourney';
 import SpeakerButton from '@/components/SpeakerButton';
 
-const SEVERITY = [
-  { val: 1, label: 'Routine',  labelHi: 'सामान्य',  body: 'Theft, paperwork, refused FIR',              bodyHi: 'चोरी, कागज़ात, FIR से इनकार',         accent: '#5FA8A0' },
-  { val: 2, label: 'Serious',  labelHi: 'गंभीर',    body: 'Repeated harassment, financial loss > ₹1L',  bodyHi: 'बार-बार उत्पीड़न, ₹1L से ज़्यादा नुकसान', accent: '#B8962E' },
-  { val: 3, label: 'Critical', labelHi: 'अति गंभीर', body: 'Violence, child safety, immediate threat',    bodyHi: 'हिंसा, बाल सुरक्षा, तुरंत खतरा',       accent: '#D9534F' },
-] as const;
+import { SEVERITY_TL as SEVERITY, PERSONA_TITLES_TL } from '@/lib/assessment-strings';
 
 const FORM_COPY: Partial<Record<LangCode, {
   eyebrow: string; title: string; em: string;
@@ -132,7 +129,6 @@ export default function AssessmentForm({ selectedLang = 'en-IN' }: AssessmentFor
   const [severity, setSeverity] = useState<1 | 2 | 3>(1);
 
   const copy = FORM_COPY[selectedLang] ?? FORM_COPY['en-IN']!;
-  const isHindi = selectedLang === 'hi-IN';
 
   const fullSpeakText = `${copy.title}${copy.em} ${copy.desc}`;
 
@@ -140,7 +136,18 @@ export default function AssessmentForm({ selectedLang = 'en-IN' }: AssessmentFor
     sessionStorage.setItem('language', lang);
     sessionStorage.setItem('persona', persona.id);
     sessionStorage.setItem('intake_severity', String(severity));
-    router.push(`/chat?lang=${lang}&persona=${persona.id}`);
+    
+    const severityStr = severity === 1 ? 'normal' : severity === 2 ? 'serious' : 'critical';
+    
+    const newCase = createCase({
+      title: "New Case",
+      personaId: persona.id,
+      language: lang,
+      severity: severityStr,
+      incidentSummary: ""
+    });
+    
+    router.push(`/case/${newCase.id}`);
   };
 
   return (
@@ -265,7 +272,7 @@ export default function AssessmentForm({ selectedLang = 'en-IN' }: AssessmentFor
                             className="font-semibold text-sm leading-none"
                             style={{ color: active ? '#ffffff' : '#0F1F3D' }}
                           >
-                            {p.titleEn}
+                            {PERSONA_TITLES_TL[p.id]?.[selectedLang] ?? p.titleEn}
                           </div>
                           <div
                             className="font-mono text-[9px] uppercase tracking-[0.16em] mt-1"
@@ -300,10 +307,10 @@ export default function AssessmentForm({ selectedLang = 'en-IN' }: AssessmentFor
                         style={active ? { background: s.accent } : {}}
                       >
                         <div lang={selectedLang} className={`font-semibold uppercase text-xs tracking-[0.16em] ${active ? 'text-white' : 'text-navy-deep'}`}>
-                          {isHindi ? s.labelHi : s.label}
+                          {s.label[selectedLang] ?? s.label['en-IN']}
                         </div>
                         <div lang={selectedLang} className={`text-[10px] font-medium mt-1 leading-snug ${active ? 'text-white/80' : 'text-secondary'}`}>
-                          {isHindi ? s.bodyHi : s.body}
+                          {s.body[selectedLang] ?? s.body['en-IN']}
                         </div>
                       </button>
                     );

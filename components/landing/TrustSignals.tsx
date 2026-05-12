@@ -55,15 +55,45 @@ const COMPLIANCE = [
   'NALSA Workflow',
 ];
 
-const TRUST_STATS = [
-  { fig: '11', label: 'Indic Languages' },
-  { fig: '5',  label: 'Specialist Modes' },
-  { fig: '4',  label: 'Document Types' },
-];
+const TRUST_STATS_LABELS: Partial<Record<LangCode, [string, string, string]>> = {
+  'hi-IN': ['भारतीय भाषाएँ', 'विशेषज्ञ मोड', 'दस्तावेज़ प्रकार'],
+  'en-IN': ['Indic Languages', 'Specialist Modes', 'Document Types'],
+  'bn-IN': ['ভারতীয় ভাষা', 'বিশেষজ্ঞ মোড', 'নথির ধরন'],
+  'ta-IN': ['இந்திய மொழிகள்', 'நிபுணர் பயன்முறைகள்', 'ஆவண வகைகள்'],
+  'te-IN': ['భారతీయ భాషలు', 'నిపుణుల మోడ్‌లు', 'పత్ర రకాలు'],
+  'mr-IN': ['भारतीय भाषा', 'तज्ञ मोड', 'कागदपत्र प्रकार'],
+  'gu-IN': ['ભારતીય ભાષાઓ', 'નિષ્ણાત મોડ', 'દસ્તાવેજ પ્રકારો'],
+  'kn-IN': ['ಭಾರತೀಯ ಭಾಷೆಗಳು', 'ತಜ್ಞ ಮೋಡ್‌ಗಳು', 'ದಾಖಲೆ ಪ್ರಕಾರಗಳು'],
+  'ml-IN': ['ഇന്ത്യൻ ഭാഷകൾ', 'വിദഗ്ദ്ധ മോഡുകൾ', 'രേഖ തരങ്ങൾ'],
+  'pa-IN': ['ਭਾਰਤੀ ਭਾਸ਼ਾਵਾਂ', 'ਮਾਹਿਰ ਮੋਡ', 'ਦਸਤਾਵੇਜ਼ ਕਿਸਮਾਂ'],
+  'od-IN': ['ଭାରତୀୟ ଭାଷା', 'ବିଶେଷଜ୍ଞ ମୋଡ', 'ଦଲିଲ ପ୍ରକାର'],
+};
+const OPERATING_LABEL: Partial<Record<LangCode, string>> = {
+  'hi-IN': 'संचालन ढांचा', 'en-IN': 'Operating Framework', 'bn-IN': 'পরিচালন কাঠামো',
+  'ta-IN': 'இயக்கும் கட்டமைப்பு', 'te-IN': 'నిర్వహణ ఫ్రేమ్‌వర్క్', 'mr-IN': 'कार्यकारी चौकट',
+  'gu-IN': 'ઓપરેટિંગ ફ્રેમવર્ક', 'kn-IN': 'ಕಾರ್ಯಾಚರಣೆ ಚೌಕಟ್ಟು', 'ml-IN': 'പ്രവർത്തന ചട്ടക്കൂട്',
+  'pa-IN': 'ਸੰਚਾਲਨ ਢਾਂਚਾ', 'od-IN': 'ପରିଚାଳନା ଢାଞ୍ଚ',
+};
+const NALSA_CTA: Partial<Record<LangCode, string>> = {
+  'hi-IN': 'NALSA मुफ्त कानूनी सहायता · 15100', 'en-IN': 'NALSA Free Legal Aid · 15100',
+  'bn-IN': 'NALSA বিনামূল্যে আইনি সহায়তা · 15100', 'ta-IN': 'NALSA இலவச சட்ட உதவி · 15100',
+  'te-IN': 'NALSA ఉచిత న్యాయ సహాయం · 15100', 'mr-IN': 'NALSA मोफत कायदेशीर मदत · 15100',
+  'gu-IN': 'NALSA મફત કાનૂની સહાય · 15100', 'kn-IN': 'NALSA ಉಚಿತ ಕಾನೂನು ನೆರವು · 15100',
+  'ml-IN': 'NALSA സൗജന്യ നിയമ സഹായം · 15100', 'pa-IN': 'NALSA ਮੁਫ਼ਤ ਕਾਨੂੰਨੀ ਮਦਦ · 15100',
+  'od-IN': 'NALSA ମାଗଣା ଆଇନ ସହାୟତା · 15100',
+};
 
 export default function TrustSignals({ selectedLang = 'en-IN' }: TrustSignalsProps) {
-  const copy = SECTION_COPY[selectedLang] ?? SECTION_COPY['en-IN']!;
-  const speakText = `${copy.title}${copy.em}`;
+  const copy        = SECTION_COPY[selectedLang]        ?? SECTION_COPY['en-IN']!;
+  const statsLabels = TRUST_STATS_LABELS[selectedLang]  ?? TRUST_STATS_LABELS['en-IN']!;
+  const opLabel     = OPERATING_LABEL[selectedLang]     ?? OPERATING_LABEL['en-IN']!;
+  const nalsaCta    = NALSA_CTA[selectedLang]           ?? NALSA_CTA['en-IN']!;
+  const speakText   = `${copy.title}${copy.em}`;
+  const TRUST_STATS = [
+    { fig: '11', label: statsLabels[0] },
+    { fig: '5',  label: statsLabels[1] },
+    { fig: '4',  label: statsLabels[2] },
+  ];
 
   return (
     <section id="trust" className="py-20 sm:py-28 lg:py-36 bg-ivory">
@@ -146,7 +176,7 @@ export default function TrustSignals({ selectedLang = 'en-IN' }: TrustSignalsPro
           className="scroll-reveal border-t border-b border-cool-gray py-6
                      flex flex-wrap items-center justify-center gap-x-6 gap-y-3"
         >
-          <span className="authority-strip mr-2">Operating Framework</span>
+          <span className="authority-strip mr-2">{opLabel}</span>
           <span className="w-px h-4 bg-cool-gray" />
           {COMPLIANCE.map((c) => (
             <span key={c} className="citation-chip citation-chip-gold">§ {c}</span>
@@ -165,7 +195,7 @@ export default function TrustSignals({ selectedLang = 'en-IN' }: TrustSignalsPro
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-60"/>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-error"/>
             </span>
-            NALSA Free Legal Aid · 15100
+            {nalsaCta}
           </a>
         </div>
       </div>

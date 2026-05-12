@@ -32,8 +32,8 @@
   --shadow-xl:   0 16px 40px rgba(15,31,61,0.15), 0 4px 10px rgba(15,31,61,0.08);
   --shadow-card: 0 2px 8px rgba(15,31,61,0.08), 0 0 1px rgba(15,31,61,0.05);
   --shadow-lift: 0 8px 28px rgba(15,31,61,0.14), 0 2px 8px rgba(15,31,61,0.08);
-  --glass-bg:     rgba(255,255,255,0.04);
-  --glass-border: rgba(255,255,255,0.08);
+  --glass-bg:     rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.12);
 }
 
 * {
@@ -41,6 +41,34 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
+}
+
+/* ── TOUCH OPTIMISATION (Android Galaxy A03 / Samsung Internet) ───────
+   touch-action: manipulation eliminates the 300 ms double-tap-to-zoom
+   delay on Android, making every button & link feel instantly responsive.
+   This is the single highest-impact mobile perf win in this file.      */
+button, a, [role="button"], label[for], summary {
+  touch-action: manipulation;
+}
+
+/* ── SAFE AREA INSETS (iPhone notch / Dynamic Island / home indicator) ─*/
+/* Apply as a utility class: <footer className="safe-bottom"> */
+.safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+.safe-bottom-only {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── MINIMUM TOUCH TARGETS (WCAG 2.5.5 — 44 × 44 CSS px) ────────────
+   Galaxy A03 has a 6.5" 720p screen (≈ 165 dpi).
+   CSS px ≈ device px on that screen, so 44px CSS = comfortable tap.    */
+.touch-target {
+  min-width:  44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 html, body {
@@ -125,7 +153,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--teal); outline-
 .authority-strip {
   font-family: 'JetBrains Mono', Menlo, monospace;
   font-size: 9px; font-weight: 500; letter-spacing: 0.22em;
-  text-transform: uppercase; color: rgba(95,168,160,0.82);
+  text-transform: uppercase; color: rgba(95,168,160,0.88);
 }
 
 /* ── OFFICIAL CARD (light sections) ───────────────────── */
@@ -241,9 +269,28 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--teal); outline-
 @keyframes marquee   { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes ring      { from { transform: scale(1); opacity: 0.7; } to { transform: scale(2.2); opacity: 0; } }
 @keyframes shimmer   { from { background-position: -200% center; } to { background-position: 200% center; } }
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+/* Mobile sidebar slide animation — only on small screens */
+.animate-slide-in-right {
+  animation: slideInRight 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
 
 /* ── SCROLLBAR ─────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--cool-gray); border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: #B0BEC5; }
+
+/* ── INDIC SCRIPT TYPOGRAPHY ──────────────────────────── */
+/* Prevent ascender/descender clipping for complex scripts */
+[lang="bn-IN"], [lang="te-IN"], [lang="ml-IN"],
+[lang="ta-IN"], [lang="kn-IN"], [lang="gu-IN"],
+[lang="pa-IN"], [lang="od-IN"], [lang="mr-IN"] {
+  line-height: 1.65;
+}
+[lang="bn-IN"] h1, [lang="te-IN"] h1, [lang="ml-IN"] h1,
+[lang="bn-IN"] h2, [lang="te-IN"] h2, [lang="ml-IN"] h2,
+[lang="bn-IN"] h3, [lang="te-IN"] h3, [lang="ml-IN"] h3 {
+  line-height: 1.25;
+}

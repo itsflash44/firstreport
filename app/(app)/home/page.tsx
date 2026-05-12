@@ -3,11 +3,13 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { LANGUAGES, t, openingFor, type LangCode } from '@/lib/i18n';
+import { useLanguage } from '@/lib/LanguageContext';
 import { PERSONAS, type PersonaSpec } from '@/lib/personas';
 import LanguageTile from '@/components/LanguageTile';
 import PersonaCard from '@/components/PersonaCard';
 import AgentAvatar from '@/components/AgentAvatar';
 import SpeakerButton from '@/components/SpeakerButton';
+import { createCase } from '@/lib/legalJourney';
 
 type Urgency = 1 | 2 | 3;
 
@@ -49,7 +51,7 @@ const DEMO_SUMMARY = 'सुनीता देवी, 38 वर्ष, घर�
 
 export default function HomePage() {
   const router = useRouter();
-  const [lang,    setLang]    = useState<LangCode>('hi-IN');
+  const { lang, setLanguage } = useLanguage();
   const [persona, setPersona] = useState<PersonaSpec>(PERSONAS[0]);
   const [urgency, setUrgency] = useState<Urgency>(1);
 
@@ -59,8 +61,16 @@ export default function HomePage() {
     sessionStorage.setItem('language',         'hi-IN');
     sessionStorage.setItem('persona',          'women_dv');
     sessionStorage.setItem('intake_severity',  '2');
-    sessionStorage.setItem('incident_summary', DEMO_SUMMARY);
-    router.push('/chat?lang=hi-IN&persona=women_dv&demo=true');
+    
+    const newCase = createCase({
+      title: "Demo Case",
+      personaId: 'women_dv',
+      language: 'hi-IN',
+      severity: 'serious',
+      incidentSummary: DEMO_SUMMARY
+    });
+    
+    router.push(`/case/${newCase.id}?demo=true`);
   };
 
   const previewMsg    = useMemo(() => openingFor(persona.id, lang), [persona.id, lang]);
@@ -76,7 +86,18 @@ export default function HomePage() {
     sessionStorage.setItem('language',        lang);
     sessionStorage.setItem('persona',         persona.id);
     sessionStorage.setItem('intake_severity', String(urgency));
-    router.push(`/chat?lang=${lang}&persona=${persona.id}`);
+    
+    const severityStr = urgency === 1 ? 'normal' : urgency === 2 ? 'serious' : 'critical';
+    
+    const newCase = createCase({
+      title: "New Case",
+      personaId: persona.id,
+      language: lang,
+      severity: severityStr,
+      incidentSummary: ""
+    });
+    
+    router.push(`/case/${newCase.id}`);
   };
 
   const urgencyItem = URGENCY_OPTIONS[urgency - 1];
@@ -117,7 +138,7 @@ export default function HomePage() {
                     key={l.code}
                     lang={l}
                     selected={lang === l.code}
-                    onSelect={() => setLang(l.code)}
+                    onSelect={() => setLanguage(l.code)}
                   />
                 ))}
               </div>

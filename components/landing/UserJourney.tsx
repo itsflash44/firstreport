@@ -8,94 +8,121 @@ interface UserJourneyProps {
   selectedLang?: LangCode;
 }
 
+import { JOURNEY_STEPS_TL as RAW_STEPS } from '@/lib/landing-strings';
+
 const JOURNEY_STEPS = [
   {
-    step: '01',
+    ...RAW_STEPS[0],
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
       </svg>
     ),
-    titleHi: 'सुनीता के साथ अन्याय हुआ',
-    titleEn: 'Sunita faces injustice',
-    bodyHi:
-      'गाज़ियाबाद की सुनीता देवी, 38 साल, घरेलू सहायिका। पड़ोसी ने उनकी अलमारी से ₹4,000 चुरा लिए। वो थाने गईं — पुलिस ने FIR लिखने से मना कर दिया।',
-    bodyEn:
-      'Sunita Devi, 38, a domestic worker in Ghaziabad. Her neighbour stole ₹4,000 from her cupboard. She went to the police station — they refused to register an FIR.',
-    statute: 'BNSS § 173',
-    accentColor: 'rgba(217,83,79,0.6)',
   },
   {
-    step: '02',
+    ...RAW_STEPS[1],
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
       </svg>
     ),
-    titleHi: 'उसने अपनी आवाज़ में बताया',
-    titleEn: 'She spoke in her own voice',
-    bodyHi:
-      'सुनीता पढ़ नहीं सकतीं। टाइप नहीं कर सकतीं। लेकिन वो बोल सकती हैं। FirstReport खोला — हिंदी में बोला — Gemma AI ने सुना और समझा।',
-    bodyEn:
-      'Sunita cannot read or type. But she can speak. She opened FirstReport, described what happened in Hindi — Gemma AI listened, understood, and recorded everything in three minutes.',
-    statute: 'Sarvam STT',
-    accentColor: 'rgba(95,168,160,0.6)',
   },
   {
-    step: '03',
+    ...RAW_STEPS[2],
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
       </svg>
     ),
-    titleHi: 'क़ानून ने उसका साथ दिया',
-    titleEn: 'The law stepped in for her',
-    bodyHi:
-      'AI ने BNSS धारा 303 पहचानी — संज्ञेय अपराध। तुरंत चार दस्तावेज़ तैयार हुए: SP शिकायत, DM याचिका, High Court रिट, और जवाबदेही पत्र।',
-    bodyEn:
-      'Gemma identified BNSS Section 303 — cognizable offence. Four documents were instantly generated: SP Complaint, DM Petition, HC Writ, and an Officer Accountability letter. All in Hindi.',
-    statute: 'BNSS § 303',
-    accentColor: 'rgba(184,150,46,0.6)',
   },
   {
-    step: '04',
+    ...RAW_STEPS[3],
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    titleHi: 'सुनीता ने न्याय माँगा',
-    titleEn: 'Sunita demanded justice',
-    bodyHi:
-      'दस्तावेज़ Telegram पर मिले। पड़ोस की दुकान पर प्रिंट हुए। SP दफ़्तर में जमा किए। अगले दिन — FIR दर्ज हो गई।',
-    bodyEn:
-      'Documents arrived on Telegram. Printed at the neighbourhood shop. Submitted to the SP office. The next day — the FIR was registered. The law was always on her side.',
-    statute: 'Justice Served',
-    accentColor: 'rgba(95,168,160,0.9)',
   },
 ];
 
-const SECTION_COPY: Partial<Record<LangCode, { eyebrow: string; title: string; sub: string; cta: string }>> = {
+const SECTION_COPY: Partial<Record<LangCode, { eyebrow: string; title: string; sub: string; cta: string; tagline: string; stat1: string; stat2: string; stat3: string }>> = {
   'hi-IN': {
     eyebrow: 'एक असली कहानी',
     title: 'जब पुलिस ने मना किया, हमने हाँ कहा।',
     sub: 'सुनीता जैसे करोड़ों लोग हैं जो न्याय के हक़दार हैं — बस रास्ता नहीं जानते।',
     cta: 'मदद लें',
+    tagline: 'पूरी तरह मुफ़्त · कोई टाइपिंग नहीं · अपनी भाषा में बोलें',
+    stat1: 'में दस्तावेज़ तैयार', stat2: 'कानूनी दस्तावेज़', stat3: 'मुफ़्त · कोई लॉगिन नहीं',
   },
   'en-IN': {
     eyebrow: 'A real story',
     title: 'When the police said no, we said yes.',
     sub: "Millions of people like Sunita deserve justice — they just don't know the way.",
     cta: 'Get Help',
+    tagline: 'Completely free · No typing required · Speak in your language',
+    stat1: 'to generate documents', stat2: 'legal documents created', stat3: 'free · no login required',
+  },
+  'bn-IN': {
+    eyebrow: 'একটি সত্য ঘটনা', title: 'পুলিশ যখন না বলল, আমরা হ্যাঁ বললাম।',
+    sub: 'সুনীতার মতো কোটি কোটি মানুষ ন্যায়বিচারের যোগ্য — তারা শুধু পথ জানে না।',
+    cta: 'সাহায্য নিন', tagline: 'সম্পূর্ণ বিনামূল্যে · টাইপ করার দরকার নেই · আপনার ভাষায় বলুন',
+    stat1: 'এ নথি তৈরি', stat2: 'আইনি নথি তৈরি', stat3: 'বিনামূল্যে · লগইন দরকার নেই',
+  },
+  'ta-IN': {
+    eyebrow: 'ஒரு உண்மையான கதை', title: 'போலீஸ் மறுத்தபோது, நாங்கள் சரி என்றோம்.',
+    sub: 'சுனிதா போன்ற கோடிக்கணக்கான மக்கள் நீதிக்கு தகுதியானவர்கள்.',
+    cta: 'உதவி பெறு', tagline: 'முற்றிலும் இலவசம் · டைப்பிங் தேவையில்லை · உங்கள் மொழியில் பேசுங்கள்',
+    stat1: 'இல் ஆவணம் தயார்', stat2: 'சட்ட ஆவணங்கள்', stat3: 'இலவசம் · உள்நுழைவு தேவையில்லை',
+  },
+  'te-IN': {
+    eyebrow: 'ఒక నిజమైన కథ', title: 'పోలీసులు వద్దన్నప్పుడు, మేము అవుననన్నాం.',
+    sub: 'సునీతా లాంటి కోట్లమంది న్యాయానికి అర్హులు — వారికి మార్గం తెలియదు.',
+    cta: 'సహాయం పొందండి', tagline: 'పూర్తిగా ఉచితం · టైపింగ్ అవసరం లేదు · మీ భాషలో మాట్లాడండి',
+    stat1: 'లో పత్రాలు సిద్ధం', stat2: 'చట్టపరమైన పత్రాలు', stat3: 'ఉచితం · లాగిన్ అవసరం లేదు',
+  },
+  'mr-IN': {
+    eyebrow: 'एक खरी कथा', title: 'पोलीसांनी नकार दिला तेव्हा, आम्ही हो म्हणालो.',
+    sub: 'सुनीतासारख्या कोट्यवधी लोक न्यायासाठी पात्र आहेत.',
+    cta: 'मदत घ्या', tagline: 'पूर्णपणे मोफत · टायपिंगची गरज नाही · तुमच्या भाषेत बोला',
+    stat1: 'मध्ये कागदपत्रे तयार', stat2: 'कायदेशीर कागदपत्रे', stat3: 'मोफत · लॉगिन नाही',
+  },
+  'gu-IN': {
+    eyebrow: 'એક સાચી વાર્તા', title: 'પોલીસે ના પાડી ત્યારે, અમે હા પાડી.',
+    sub: 'સુનિતા જેવા કરોડો લોકો ન્યાયના હક્કદાર છે.',
+    cta: 'મદદ મેળવો', tagline: 'સંપૂર્ણપણે મફત · ટાઇપ કરવાની જરૂર નથી · તમારી ભાષામાં બોલો',
+    stat1: 'માં દસ્તાવેજો તૈયાર', stat2: 'કાનૂની દસ્તાવેજો', stat3: 'મફત · લોગિન જરૂરી નથી',
+  },
+  'kn-IN': {
+    eyebrow: 'ಒಂದು ನಿಜವಾದ ಕಥೆ', title: 'ಪೊಲೀಸರು ಇಲ್ಲ ಎಂದಾಗ, ನಾವು ಹೌದು ಎಂದೆವು.',
+    sub: 'ಸುನೀತಾ ಅಂಥ ಕೋಟ್ಯಂತರ ಜನರು ನ್ಯಾಯಕ್ಕೆ ಅರ್ಹರು.',
+    cta: 'ಸಹಾಯ ಪಡೆಯಿರಿ', tagline: 'ಸಂಪೂರ್ಣ ಉಚಿತ · ಟೈಪಿಂಗ್ ಅಗತ್ಯವಿಲ್ಲ · ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಮಾತನಾಡಿ',
+    stat1: 'ನಲ್ಲಿ ದಾಖಲೆಗಳು ಸಿದ್ಧ', stat2: 'ಕಾನೂನು ದಾಖಲೆಗಳು', stat3: 'ಉಚಿತ · ಲಾಗಿನ್ ಅಗತ್ಯವಿಲ್ಲ',
+  },
+  'ml-IN': {
+    eyebrow: 'ഒരു യഥാർത്ഥ കഥ', title: 'പോലീസ് വേണ്ടെന്ന് പറഞ്ഞപ്പോൾ, ഞങ്ങൾ ശരി എന്ന് പറഞ്ഞു.',
+    sub: 'സുനിതയെപ്പോലുള്ള കോടിക്കണക്കിന് ആളുകൾ നീതിക്ക് അർഹരാണ്.',
+    cta: 'സഹായം നേടുക', tagline: 'പൂർണ്ണമായും സൗജന്യം · ടൈപ്പിംഗ് വേണ്ട · നിങ്ങളുടെ ഭാഷയിൽ സംസാരിക്കൂ',
+    stat1: 'ൽ രേഖകൾ തയ്യാർ', stat2: 'നിയമ രേഖകൾ', stat3: 'സൗജന്യം · ലോഗിൻ ആവശ്യമില്ല',
+  },
+  'pa-IN': {
+    eyebrow: 'ਇੱਕ ਅਸਲੀ ਕਹਾਣੀ', title: 'ਜਦੋਂ ਪੁਲਿਸ ਨੇ ਨਾਂ ਕਿਹਾ, ਅਸੀਂ ਹਾਂ ਕਿਹਾ।',
+    sub: 'ਸੁਨੀਤਾ ਵਰਗੇ ਕਰੋੜਾਂ ਲੋਕ ਇਨਸਾਫ਼ ਦੇ ਹੱਕਦਾਰ ਹਨ।',
+    cta: 'ਮਦਦ ਲਓ', tagline: 'ਪੂਰੀ ਤਰ੍ਹਾਂ ਮੁਫ਼ਤ · ਟਾਈਪ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ · ਆਪਣੀ ਭਾਸ਼ਾ ਵਿੱਚ ਬੋਲੋ',
+    stat1: 'ਵਿੱਚ ਦਸਤਾਵੇਜ਼ ਤਿਆਰ', stat2: 'ਕਾਨੂੰਨੀ ਦਸਤਾਵੇਜ਼', stat3: 'ਮੁਫ਼ਤ · ਲਾਗਇਨ ਦੀ ਲੋੜ ਨਹੀਂ',
+  },
+  'od-IN': {
+    eyebrow: 'ଏକ ପ୍ରକୃତ ଘଟଣା', title: 'ପୋଲିସ ଯେତେବେଳେ ନା କହିଲେ, ଆମେ ହଁ କହିଲୁ।',
+    sub: 'ସୁନୀତା ଭଳି କୋଟି କୋଟି ଲୋକ ନ୍ୟାୟ ପାଇଁ ଯୋଗ୍ୟ।',
+    cta: 'ସାହାଯ୍ୟ ନିଅ', tagline: 'ସଂପୂର୍ଣ୍ଣ ମାଗଣା · ଟାଇପ କରିବା ଦରକାର ନାହିଁ · ଆପଣଙ୍କ ଭାଷାରେ କଥାବାର୍ତ୍ତା କରନ୍ତୁ',
+    stat1: 'ରେ ଦଲିଲ ପ୍ରସ୍ତୁତ', stat2: 'ଆଇନଗତ ଦଲିଲ', stat3: 'ମାଗଣା · ଲଗଇନ ଦରକାର ନାହିଁ',
   },
 };
 
 export default function UserJourney({ selectedLang = 'en-IN' }: UserJourneyProps) {
   const copy = SECTION_COPY[selectedLang] ?? SECTION_COPY['en-IN']!;
-  const isHindi = selectedLang === 'hi-IN';
 
   const fullSpeakText = JOURNEY_STEPS.map(
-    (s) => `${isHindi ? s.titleHi : s.titleEn}. ${isHindi ? s.bodyHi : s.bodyEn}`
+    (s) => `${s.title[selectedLang] ?? s.title['en-IN']}. ${s.body[selectedLang] ?? s.body['en-IN']}`
   ).join(' ');
 
   return (
@@ -136,7 +163,10 @@ export default function UserJourney({ selectedLang = 'en-IN' }: UserJourneyProps
                style={{ background: 'linear-gradient(180deg, rgba(95,168,160,0.3) 0%, rgba(184,150,46,0.3) 100%)' }} />
 
           <div className="space-y-5">
-            {JOURNEY_STEPS.map((step, idx) => (
+            {JOURNEY_STEPS.map((step, idx) => {
+              const title = step.title[selectedLang] ?? step.title['en-IN'];
+              const body  = step.body[selectedLang] ?? step.body['en-IN'];
+              return (
               <div
                 key={step.step}
                 className="scroll-reveal relative flex gap-6 lg:gap-10 items-start"
@@ -181,10 +211,10 @@ export default function UserJourney({ selectedLang = 'en-IN' }: UserJourneyProps
                             lang={selectedLang}
                             className="font-serif font-bold text-xl sm:text-2xl text-navy-deep mb-2 leading-snug"
                           >
-                            {isHindi ? step.titleHi : step.titleEn}
+                            {title}
                           </h3>
                           <p lang={selectedLang} className="text-sm sm:text-base text-secondary leading-relaxed">
-                            {isHindi ? step.bodyHi : step.bodyEn}
+                            {body}
                           </p>
                         </div>
                         {/* Icon + statute + speaker — desktop */}
@@ -197,7 +227,7 @@ export default function UserJourney({ selectedLang = 'en-IN' }: UserJourneyProps
                           </div>
                           <span className="citation-chip citation-chip-light">{step.statute}</span>
                           <SpeakerButton
-                            text={`${isHindi ? step.titleHi : step.titleEn}. ${isHindi ? step.bodyHi : step.bodyEn}`}
+                            text={`${title}. ${body}`}
                             language={selectedLang}
                             variant="mini"
                           />
@@ -207,7 +237,7 @@ export default function UserJourney({ selectedLang = 'en-IN' }: UserJourneyProps
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </div>
 
@@ -223,18 +253,16 @@ export default function UserJourney({ selectedLang = 'en-IN' }: UserJourneyProps
             {copy.cta} →
           </Link>
           <p className="text-sm text-secondary max-w-xs text-center sm:text-left" lang={selectedLang}>
-            {isHindi
-              ? 'पूरी तरह मुफ़्त · कोई टाइपिंग नहीं · हिंदी में बोलें'
-              : 'Completely free · No typing required · Speak in your language'}
+            {copy.tagline}
           </p>
         </div>
 
         {/* Stat strip */}
         <div className="mt-12 pt-10 border-t border-cool-gray grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-10 scroll-reveal">
           {[
-            { fig: '3', unit: 'min', label: isHindi ? 'में दस्तावेज़ तैयार' : 'to generate documents' },
-            { fig: '4', unit: '',    label: isHindi ? 'कानूनी दस्तावेज़' : 'legal documents created' },
-            { fig: '100', unit: '%', label: isHindi ? 'मुफ़्त · कोई लॉगिन नहीं' : 'free · no login required' },
+            { fig: '3', unit: 'min', label: copy.stat1 },
+            { fig: '4', unit: '',    label: copy.stat2 },
+            { fig: '100', unit: '%', label: copy.stat3 },
           ].map((s) => (
             <div key={s.fig}>
               <div className="flex items-baseline gap-0.5">

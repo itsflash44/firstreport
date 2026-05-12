@@ -1,0 +1,80 @@
+{
+  "name": "FirstReport — नागरिक कानूनी सहायक",
+  "short_name": "FirstReport",
+  "description": "भारत का पहला नागरिक-स्वामित्व वाला कानूनी AI — BNSS 2023 के तहत",
+  "start_url": "/home",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
+  "background_color": "#F5F2EA",
+  "theme_color": "#0F1F3D",
+  "orientation": "portrait-primary",
+  "lang": "hi",
+  "categories": ["legal", "utilities", "government"],
+  "icons": [
+    {
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "FirstReport Home"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "नया केस",
+      "short_name": "नया",
+      "description": "नया कानूनी केस शुरू करें",
+      "url": "/home",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "NALSA हेल्पलाइन",
+      "short_name": "15100",
+      "description": "राष्ट्रीय कानूनी सहायता",
+      "url": "tel:15100",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "scope": "/",
+  "id": "firstReport-v1"
+}

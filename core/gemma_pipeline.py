@@ -111,9 +111,10 @@ def _load_vision_processor():
         logger.error(f"Failed to load vision processor: {e}")
 
 
-def _generate(prompt: str, max_tokens: int = 512) -> str:
+def _generate(prompt: str, max_tokens: int = 512) -> tuple[str, str]:
     """
-    Generate text. Tries local Gemma first, then Gemini API, then Mock only if enabled.
+    Generate text. Returns (response_text, model_name).
+    Tries local Gemma first, then Gemini API, then Mock only if enabled.
     """
     # 1. Try local Gemma first
     try:
@@ -130,25 +131,34 @@ def _generate(prompt: str, max_tokens: int = 512) -> str:
                     top_p=0.9
                 )
             response = _tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
-            return response.strip()
+            return response.strip(), "gemma"
     except Exception as e:
         logger.error(f"Gemma generation error: {e}")
 
-    # 2. Fallback to Gemini API if Gemma fails or is not loaded
+    # 2. Try Gemma 4 API (Hosted via Google AI)
     if os.environ.get("GEMINI_API_KEY"):
         try:
             import google.generativeai as genai
             genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-            gemini_model = genai.GenerativeModel("gemini-flash-latest")
-            res = gemini_model.generate_content(prompt)
-            return res.text
+            # Prioritize genuine Gemma via API
+            gemma_api_model = genai.GenerativeModel("models/gemma-4-31b-it")
+            res = gemma_api_model.generate_content(prompt)
+            return res.text, "gemma"
         except Exception as e:
-            logger.error(f"Gemini generation error: {e}")
+            logger.warning(f"Gemma API generation failed: {e}. Falling back to Gemini.")
+
+            # 3. Fallback to Gemini if Gemma API fails
+            try:
+                gemini_model = genai.GenerativeModel("gemini-flash-latest")
+                res = gemini_model.generate_content(prompt)
+                return res.text, "gemini"
+            except Exception as e2:
+                logger.error(f"Gemini generation error: {e2}")
 
     # 3. Final fallback to Mock ONLY if USE_MOCK_MODEL is true
     if USE_MOCK_MODEL:
         logger.info("Falling back to MOCK generate")
-        return _mock_generate(prompt)
+        return _mock_generate(prompt), "mock"
     
     raise RuntimeError("No inference engine available (Gemma failed, Gemini failed, and Mock is disabled)")
 
@@ -342,27 +352,63 @@ def generate_narrative(
         lang_code=lang_code,
         safety_note=SAFETY_PROMPT_HINDI
     )
-    return _generate(prompt, max_tokens=1000)
+    text, _ = _generate(prompt, max_tokens=1000)
+    return text
 
-CLARIFICATION_PROMPT = """You are a legal assistant analyzing a crime report. 
-Read the transcript. If vital legal details are missing (e.g. the specific time, location, or exact sequence of events), ask ONE clear, simple follow-up question to the victim to get that missing detail.
-If the transcript already has enough detail to file a basic police complaint, reply with the exact word: NONE.
+CASE_CHAT_PROMPT = """You are a senior legal assistant at FirstReport, an AI legal platform for Indian citizens.
+You are currently in an active case workspace with a victim or witness.
 
-Transcript: {transcript}
-Language: {lang_code}
+You have full context:
+{context}
 
-Instructions:
-1. Ask the question in the language specified by {lang_code}.
-2. Keep it simple and empathetic.
-3. If no clarification is needed, output ONLY: NONE
-"""
+Your job:
+1. READ the entire case background and conversation history carefully.
+2. Respond to EXACTLY what the user said in their LATEST message.
+3. DO NOT repeat questions already asked in the conversation.
+4. DO NOT repeat yourself — if you already offered to generate documents and they said yes, tell them the next step.
 
+Behavior rules by situation:
+- If the user asks you to draft/generate documents → Check if you know their FULL NAME, ADDRESS, and the POLICE STATION NAME.
+- If you are missing any of these details → Ask the user for them. DO NOT DRAFT ANYTHING YET.
+- If you have all details (Name, Address, Station, Time, Offense) AND they want documents → Tell them the documents are ready to be generated, and append exactly [ACTION:GENERATE_DOCS] at the end of your response.
+- CRITICAL RULE: NEVER write the actual draft of the legal complaint or FIR in the chat message. The system generates formal PDFs separately. You must only guide them.
+- If the user confirms an action (yes / haan / kariye / theek hai / ok) → Acknowledge and guide them to the next concrete step (ask for missing details or output [ACTION:GENERATE_DOCS]).
+- If the user is providing new information → Acknowledge it and ask for any remaining missing detail.
+
+Format rules:
+- Respond in language: {lang_code}
+- Keep response concise (3-5 sentences max for simple answers, bullet list for document questions)
+- Be warm, professional, and empathetic
+- NEVER start with "I understand" or "I see" — just answer directly
+- NEVER echo back what the user said
+
+Your response:"""
+
+
+def generate_case_response(context: str, lang_code: str, mode: str = "chat") -> tuple[Optional[str], str]:
+    """Unified AI response for the case workspace.
+    Returns (response_text, model_name) where model_name is 'gemma', 'gemini', or 'mock'.
+    """
+    prompt = CASE_CHAT_PROMPT.format(context=context, lang_code=lang_code)
+    response, model_used = _generate(prompt, max_tokens=400)
+    response = response.strip()
+
+    # Safety: if model returns NONE or empty, give a sensible fallback
+    if not response or response.upper().startswith("NONE") or len(response) < 5:
+        fallbacks = {
+            "hi-IN": "मैं आपकी मदद के लिए यहाँ हूँ। क्या आप बता सकते हैं कि आगे क्या करना है?",
+            "en-IN": "I'm here to help. What would you like to do next with your case?"
+        }
+        return fallbacks.get(lang_code, fallbacks["en-IN"]), model_used
+
+    return response, model_used
+
+
+# Backwards compatibility
 def generate_clarification_question(transcript: str, lang_code: str) -> Optional[str]:
-    prompt = CLARIFICATION_PROMPT.format(transcript=transcript, lang_code=lang_code)
-    response = _generate(prompt, max_tokens=100).strip()
-    if response.upper() == "NONE" or "NONE" in response.upper():
-        return None
-    return response
+    context = f"=== LATEST USER MESSAGE ===\n{transcript}"
+    text, _ = generate_case_response(context, lang_code, mode="chat")
+    return text
 
 
 # ──────────────────────────────────────

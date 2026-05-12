@@ -33,9 +33,25 @@ export interface CreateSessionInput {
 /** Create a new session row. Returns session id or null on failure. */
 export async function createSession(data: CreateSessionInput): Promise<string | null> {
   try {
+    const targetUserId = data.userId || 'anonymous_guest';
+
+    // Ensure user exists to satisfy foreign key constraint.
+    // FIX: never overwrite name — only set it on CREATE when genuinely unknown.
+    // The real name comes from upsertUser() which runs after OTP/OAuth and has
+    // access to user_metadata. Using a placeholder here so the FK is satisfied
+    // without stomping the actual profile name.
+    await prisma.user.upsert({
+      where:  { id: targetUserId },
+      update: {},   // ← never mutate existing rows from here
+      create: {
+        id:   targetUserId,
+        name: data.userId ? null : 'Anonymous Guest',   // null = not yet known; upsertUser fills it
+      },
+    });
+
     const session = await prisma.session.create({
       data: {
-        userId: data.userId ?? '',
+        userId: targetUserId,
         language: data.language ?? 'hi-IN',
         rawTranscriptJson: JSON.stringify([]),
         incidentSummary: '',

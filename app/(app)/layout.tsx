@@ -2,15 +2,17 @@
 
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import FirstReportLogo from '@/components/FirstReportLogo';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { audioManager } from '@/lib/audioManager';
 import { uiStr } from '@/lib/ui-strings';
+import { LanguageProvider, useLanguage } from '@/lib/LanguageContext';
 import type { LangCode } from '@/lib/i18n';
+import { createCase } from '@/lib/legalJourney';
+import OfflineIndicator from '@/components/OfflineIndicator';
 
 const SettingsDrawer  = lazy(() => import('@/components/SettingsDrawer'));
-const OfflineQueueCard = lazy(() => import('@/components/OfflineQueueCard'));
 
 /* ── SVG icons ────────────────────────────────────────────────────── */
 const IconHome = () => (
@@ -45,33 +47,41 @@ const IconSettings = () => (
   </svg>
 );
 
+const IconJourney = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+  </svg>
+);
+
 const NAV_ITEMS = [
   { href: '/home',      labelKey: 'home'           as const, Icon: IconHome      },
-  { href: '/chat',      labelKey: 'newReport'      as const, Icon: IconChat      },
-  { href: '/classify',  labelKey: 'classification' as const, Icon: IconClipboard },
-  { href: '/documents', labelKey: 'documents'      as const, Icon: IconDocument  },
   { href: '/history',   labelKey: 'history'        as const, Icon: IconHistory   },
 ];
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+function LayoutContent({ children }: { children: React.ReactNode }) {
   const [sidebarOpen,  setSidebarOpen]  = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [lang, setLang] = useState<LangCode>('hi-IN');
+  const { lang, setLanguage } = useLanguage();
   const pathname = usePathname();
+  const router = useRouter();
 
-  useEffect(() => {
-    const saved  = localStorage.getItem('fr_lang') as LangCode | null;
-    const urlLang = new URLSearchParams(window.location.search).get('lang') as LangCode | null;
-    if (urlLang) setLang(urlLang);
-    else if (saved) setLang(saved);
-  }, []);
+  const handleNewReport = () => {
+    const newCase = createCase({
+      title: "New Report",
+      personaId: 'standard', // fallback persona, user can change later if needed or we use default
+      language: lang,
+      severity: 'normal',
+      incidentSummary: ""
+    });
+    setSidebarOpen(false);
+    router.push(`/case/${newCase.id}`);
+  };
 
   useEffect(() => { audioManager.stopAll(); }, [pathname]);
 
   const handleLangChange = useCallback((next: LangCode) => {
-    setLang(next);
-    localStorage.setItem('fr_lang', next);
-  }, []);
+    setLanguage(next);
+  }, [setLanguage]);
 
   return (
     <div className="min-h-screen bg-ivory">
@@ -169,6 +179,26 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
             );
           })}
+
+          <div className="mt-4 px-2">
+            <button
+              onClick={handleNewReport}
+              className={`relative flex items-center gap-3 w-full px-3 py-3 rounded-sm
+                          bg-teal/10 hover:bg-teal/20 text-teal transition-all duration-300
+                          ${sidebarOpen ? 'justify-start' : 'justify-center'}`}
+              title="New Report"
+            >
+              <span className="shrink-0">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+              </span>
+              <span className={`text-sm font-semibold whitespace-nowrap transition-opacity duration-200
+                ${sidebarOpen ? 'opacity-100' : 'opacity-0 absolute pointer-events-none'}`}>
+                New Report
+              </span>
+            </button>
+          </div>
         </nav>
 
         {/* Settings */}
@@ -207,6 +237,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         />
       </Suspense>
 
+      {/* ── OFFLINE INDICATOR ─────────────────────────────────────── */}
+      <OfflineIndicator />
+
       {/* ── MAIN CONTENT ──────────────────────────────────────────── */}
       <main className={`pt-16 min-h-screen transition-all duration-300 ease-in-out
         ${sidebarOpen ? 'md:pl-56' : 'md:pl-[60px]'}`}>
@@ -215,8 +248,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* ── OFFLINE QUEUE ─────────────────────────────────────────── */}
       <Suspense fallback={null}>
-        <OfflineQueueCard />
       </Suspense>
     </div>
+  );
+}
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <LanguageProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </LanguageProvider>
   );
 }

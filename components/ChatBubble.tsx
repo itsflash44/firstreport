@@ -49,8 +49,13 @@ const ChatBubble = memo(function ChatBubble({
       </div>
 
       {isAI && (
-        <div className="absolute -bottom-3 -right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-          <SpeakerButton text={text} language={language} persona={persona} variant="mini" />
+        /* FIX: Mobile has no hover events — always visible on small screens.
+           On desktop, fade in on hover only (less visual noise).
+           touch-target wrapper guarantees ≥44px tap area on Galaxy A03.    */
+        <div className="absolute -bottom-3 -right-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 z-10">
+          <div className="touch-target">
+            <SpeakerButton text={text} language={language} persona={persona} variant="mini" />
+          </div>
         </div>
       )}
     </div>

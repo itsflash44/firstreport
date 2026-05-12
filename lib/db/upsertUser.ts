@@ -14,21 +14,31 @@ export interface AuthUser {
 }
 
 export async function upsertUser(authUser: AuthUser) {
+  // Resolve display name from Google OAuth / OTP user_metadata
+  const resolvedName =
+    authUser.user_metadata?.full_name ??
+    authUser.user_metadata?.name ??
+    null;
+
   try {
     return await prisma.user.upsert({
       where: { id: authUser.id },
       create: {
-        id: authUser.id,
-        phone: authUser.phone ?? null,
-        email: authUser.email ?? null,
-        name: authUser.user_metadata?.full_name ?? authUser.user_metadata?.name ?? null,
+        id:                authUser.id,
+        phone:             authUser.phone ?? null,
+        email:             authUser.email ?? null,
+        name:              resolvedName,
         preferredLanguage: 'hi',
-        trainingConsent: true,
+        trainingConsent:   true,
       },
       update: {
-        // Only update fields that might have changed
-        email: authUser.email ?? undefined,
-        phone: authUser.phone ?? undefined,
+        // FIX: always update name from real auth metadata.
+        // createSession() leaves name=null (placeholder). upsertUser() is the
+        // authoritative source of the display name after actual sign-in.
+        // Spread conditionally so undefined values don't overwrite good data.
+        ...(resolvedName               ? { name:  resolvedName }       : {}),
+        ...(authUser.email             ? { email: authUser.email }     : {}),
+        ...(authUser.phone             ? { phone: authUser.phone }     : {}),
       },
     });
   } catch (err) {

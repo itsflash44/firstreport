@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LuxuryNav from '@/components/landing/LuxuryNav';
 import HeroLanding from '@/components/landing/HeroLanding';
 import UserJourney from '@/components/landing/UserJourney';
@@ -15,12 +15,25 @@ import type { LangCode } from '@/lib/i18n';
 export default function LandingPage() {
   const [selectedLang, setSelectedLang] = useState<LangCode>('hi-IN');
 
+  // Read persisted preference once on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('fr_lang') as LangCode | null;
+      if (saved) setSelectedLang(saved);
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleLangChange = (lang: LangCode) => {
+    setSelectedLang(lang);
+    try { localStorage.setItem('fr_lang', lang); } catch { /* ignore */ }
+  };
+
   // Wire IntersectionObserver — fires .revealed on every .scroll-reveal element
   useScrollReveal();
 
   return (
     <div className="min-h-screen bg-ivory">
-      <LuxuryNav selectedLang={selectedLang} onLangChange={setSelectedLang} />
+      <LuxuryNav selectedLang={selectedLang} onLangChange={handleLangChange} />
       <main>
         <HeroLanding selectedLang={selectedLang} />
         <UserJourney selectedLang={selectedLang} />
@@ -29,7 +42,7 @@ export default function LandingPage() {
         <AssessmentForm selectedLang={selectedLang} />
         <TrustSignals selectedLang={selectedLang} />
       </main>
-      <LuxuryFooter />
+      <LuxuryFooter selectedLang={selectedLang} />
     </div>
   );
 }

@@ -31,6 +31,7 @@ const config: Config = {
         'navy-deep':  '#0F1F3D',   // hero / dark section backgrounds
         navy:         '#1A2A44',   // primary surfaces, card headers (kept for compat)
         teal:         '#5FA8A0',   // accent, CTAs, voice/AI elements
+        'teal-dark':  '#4D9990',   // hover state for teal buttons
         gold:         '#B8962E',   // muted law-seal gold — stat numbers, § citations
         ivory:        '#F5F2EC',   // warm off-white — legal paper background
         'cool-gray':  '#D9E2EC',   // borders, dividers

@@ -1,0 +1,63 @@
+INFO:main:Extended routes loaded ✓
+INFO:main:Frontend served from /Users/flash/Desktop/firstReport/frontend
+INFO:     Started server process [68393]
+INFO:     Waiting for application startup.
+INFO:backend.supabase_client:Supabase client initialised ✓
+INFO:httpx:HTTP Request: GET https://lrjsehyaownymovryeru.supabase.co/rest/v1/OfflineQueue?select=%2A&status=eq.PENDING "HTTP/2 400 Bad Request"
+WARNING:offline.sync_queue:Could not load pending queue from Supabase: {'message': 'column OfflineQueue.status does not exist', 'code': '42703', 'hint': None, 'details': None}
+INFO:offline.sync_queue:Telegram retry worker started
+INFO:main:Startup: Telegram queue loaded ✓
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:core.gemma_pipeline:Loading Gemma 4 from google/gemma-1.1-2b-it...
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/google/gemma-1.1-2b-it/resolve/main/config.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/google/gemma-1.1-2b-it/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/google/gemma-1.1-2b-it/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/google/gemma-1.1-2b-it/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/google/gemma-1.1-2b-it "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/google/gemma-1.1-2b-it/resolve/main/config.json "HTTP/1.1 200 OK"
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+ERROR:core.gemma_pipeline:Failed to load Gemma 4: Using a `device_map`, `tp_plan`, `torch.device` context manager or setting `torch.set_default_device(device)` requires `accelerate`. You can install it with `pip install accelerate`
+INFO:core.gemma_pipeline:Falling back to mock mode
+/Users/flash/Desktop/firstReport/core/gemma_pipeline.py:141: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+INFO:     127.0.0.1:63059 - "POST /api/clarify HTTP/1.1" 200 OK
+INFO:core.gemma_pipeline:Loading Gemma 4 from google/gemma-1.1-2b-it...
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/google/gemma-1.1-2b-it/resolve/main/config.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/google/gemma-1.1-2b-it/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/google/gemma-1.1-2b-it/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/google/gemma-1.1-2b-it/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/google/gemma-1.1-2b-it "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/google/gemma-1.1-2b-it/resolve/main/config.json "HTTP/1.1 200 OK"
+ERROR:core.gemma_pipeline:Failed to load Gemma 4: Using a `device_map`, `tp_plan`, `torch.device` context manager or setting `torch.set_default_device(device)` requires `accelerate`. You can install it with `pip install accelerate`
+INFO:core.gemma_pipeline:Falling back to mock mode
+INFO:     127.0.0.1:63065 - "POST /api/clarify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63072 - "POST /api/tts-proxy HTTP/1.1" 200 OK
+INFO:core.gemma_pipeline:Loading Gemma 4 from google/gemma-1.1-2b-it...
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/google/gemma-1.1-2b-it/resolve/main/config.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/google/gemma-1.1-2b-it/resolve/main/tokenizer_config.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/google/gemma-1.1-2b-it/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/google/gemma-1.1-2b-it/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/google/gemma-1.1-2b-it "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/google/gemma-1.1-2b-it/resolve/main/config.json "HTTP/1.1 200 OK"
+ERROR:core.gemma_pipeline:Failed to load Gemma 4: Using a `device_map`, `tp_plan`, `torch.device` context manager or setting `torch.set_default_device(device)` requires `accelerate`. You can install it with `pip install accelerate`
+INFO:core.gemma_pipeline:Falling back to mock mode
+INFO:     127.0.0.1:63090 - "POST /api/clarify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63227 - "GET / HTTP/1.1" 304 Not Modified
+ERROR:backend.extended_routes:TTS proxy exception: HTTPSConnectionPool(host='api.sarvam.ai', port=443): Read timed out. (read timeout=15)
+INFO:     127.0.0.1:63227 - "POST /api/tts-proxy HTTP/1.1" 502 Bad Gateway
+INFO:     127.0.0.1:63230 - "GET / HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63230 - "POST /api/tts-proxy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63299 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63299 - "GET / HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63299 - "POST /api/tts-proxy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63436 - "GET / HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63436 - "POST /api/tts-proxy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63542 - "GET / HTTP/1.1" 404 Not Found

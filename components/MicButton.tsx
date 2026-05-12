@@ -198,8 +198,11 @@ export default function MicButton({
       </p>
 
       {permError && (
-        <p className="text-[11px] font-medium text-error max-w-[14rem] text-center leading-snug">
-          Mic permission denied — please allow in browser settings
+        /* FIX: bilingual error — Sunita Devi reads Hindi, not English */
+        <p className="text-[11px] font-medium text-error max-w-[16rem] text-center leading-snug" lang={lang}>
+          {lang === 'hi-IN' || lang.startsWith('hi')
+            ? 'माइक की अनुमति नहीं मिली। ब्राउज़र सेटिंग में माइक चालू करें।'
+            : 'Mic permission denied — please allow in browser settings'}
         </p>
       )}
     </div>

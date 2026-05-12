@@ -7,68 +7,54 @@ interface HowItWorksProps {
   selectedLang?: LangCode;
 }
 
+import { HOW_IT_WORKS_STEPS as RAW_STEPS } from '@/lib/landing-strings';
+
 const STEPS = [
   {
-    num: 'I',
+    ...RAW_STEPS[0],
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
       </svg>
     ),
-    titleEn: 'Speak',       titleHi: 'बोलें',
-    bodyEn:  'Hold the mic and describe what happened — in Hindi, Tamil, Punjabi, or any of 9 other Indic languages. Sarvam STT transcribes it in real time. No English typing. Ever.',
-    bodyHi:  'माइक पकड़ें और बताएं क्या हुआ — हिंदी, तमिल, पंजाबी या किसी भी 9 अन्य भारतीय भाषाओं में। Sarvam STT रियल टाइम में लिखता है। कभी भी अंग्रेज़ी टाइप नहीं।',
-    statute: 'Sarvam STT · 11 Languages',
-    accentColor: '#5FA8A0',
   },
   {
-    num: 'II',
+    ...RAW_STEPS[1],
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
       </svg>
     ),
-    titleEn: 'Triage',      titleHi: 'वर्गीकरण',
-    bodyEn:  'Gemma 4 cross-references your account against BNSS 2023, POCSO, PWDVA, and MWPSC. It determines cognizable vs. non-cognizable and the correct escalation chain.',
-    bodyHi:  'Gemma 4 आपकी बात को BNSS 2023, POCSO, PWDVA और MWPSC के खिलाफ क्रॉस-रेफरेंस करता है। यह संज्ञेय बनाम असंज्ञेय और सही escalation chain निर्धारित करता है।',
-    statute: 'Gemma 4 · BNSS 2023',
-    accentColor: '#B8962E',
   },
   {
-    num: 'III',
+    ...RAW_STEPS[2],
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
     ),
-    titleEn: 'File',        titleHi: 'दर्ज करें',
-    bodyEn:  'Receive ready-to-file documents — SP complaint today, DM petition in 3 days, High Court writ in 18. Delivered via Telegram. Printable at any neighbourhood shop.',
-    bodyHi:  'तैयार-to-file दस्तावेज़ प्राप्त करें — आज SP शिकायत, 3 दिन में DM याचिका, 18 में High Court रिट। Telegram पर पहुँचाए गए। किसी भी पास की दुकान पर प्रिंट करें।',
-    statute: 'Telegram · Offline-Ready',
-    accentColor: '#0F1F3D',
   },
 ];
 
-const SECTION_COPY: Partial<Record<LangCode, { eyebrow: string; title: string; em: string }>> = {
-  'en-IN': { eyebrow: 'The Procedure', title: 'Three deliberate steps — ', em: 'no English required.' },
-  'hi-IN': { eyebrow: 'प्रक्रिया',     title: 'तीन सुनिश्चित चरण — ',   em: 'कोई अंग्रेज़ी ज़रूरी नहीं।' },
-  'bn-IN': { eyebrow: 'পদ্ধতি',         title: 'তিনটি সুনির্দিষ্ট ধাপ — ', em: 'ইংরেজি ছাড়াই।' },
-  'ta-IN': { eyebrow: 'நடைமுறை',        title: 'மூன்று படிகள் — ',         em: 'ஆங்கிலம் தேவையில்லை.' },
-  'te-IN': { eyebrow: 'విధానం',          title: 'మూడు దశలు — ',             em: 'ఇంగ్లీష్ అవసరం లేదు.' },
-  'mr-IN': { eyebrow: 'प्रक्रिया',       title: 'तीन निश्चित टप्पे — ',     em: 'इंग्रजी आवश्यक नाही.' },
-  'gu-IN': { eyebrow: 'પ્રક્રિયા',       title: 'ત્રણ નક્કી પગલાં — ',      em: 'અંગ્રેજી જરૂરી નથી.' },
-  'kn-IN': { eyebrow: 'ಪ್ರಕ್ರಿಯೆ',      title: 'ಮೂರು ನಿರ್ಧಿಷ್ಟ ಹಂತಗಳು — ', em: 'ಇಂಗ್ಲಿಷ್ ಬೇಕಿಲ್ಲ.' },
-  'ml-IN': { eyebrow: 'നടപടിക്രമം',     title: 'മൂന്ന് ഘട്ടങ്ങൾ — ',        em: 'ഇംഗ്ലീഷ് വേണ്ട.' },
-  'pa-IN': { eyebrow: 'ਪ੍ਰਕਿਰਿਆ',       title: 'ਤਿੰਨ ਕਦਮ — ',              em: 'ਅੰਗਰੇਜ਼ੀ ਦੀ ਲੋੜ ਨਹੀਂ।' },
-  'od-IN': { eyebrow: 'ପ୍ରକ୍ରିୟା',      title: 'ତିନୋଟି ନିର୍ଦ୍ଦିଷ୍ଟ ପଦକ୍ଷେପ — ', em: 'ଇଂରାଜୀ ଆବଶ୍ୟକ ନାହିଁ।' },
+const SECTION_COPY: Partial<Record<LangCode, { eyebrow: string; title: string; em: string; pursuant: string }>> = {
+  'en-IN': { eyebrow: 'The Procedure', title: 'Three deliberate steps — ', em: 'no English required.', pursuant: 'Pursuant to' },
+  'hi-IN': { eyebrow: 'प्रक्रिया',     title: 'तीन सुनिश्चित चरण — ',   em: 'कोई अंग्रेज़ी ज़रूरी नहीं।', pursuant: 'के अनुसार' },
+  'bn-IN': { eyebrow: 'পদ্ধতি',         title: 'তিনটি সুনির্দিষ্ট ধাপ — ', em: 'ইংরেজি ছাড়াই।', pursuant: 'অনুসারে' },
+  'ta-IN': { eyebrow: 'நடைமுறை',        title: 'மூன்று படிகள் — ',         em: 'ஆங்கிலம் தேவையில்லை.', pursuant: 'இன் படி' },
+  'te-IN': { eyebrow: 'విధానం',          title: 'మూడు దశలు — ',             em: 'ఇంగ్లీష్ అవసరం లేదు.', pursuant: 'ప్రకారం' },
+  'mr-IN': { eyebrow: 'प्रक्रिया',       title: 'तीन निश्चित टप्पे — ',     em: 'इंग्रजी आवश्यक नाही.', pursuant: 'अनुसार' },
+  'gu-IN': { eyebrow: 'પ્રક્રિયા',       title: 'ત્રણ નક્કી પગલાં — ',      em: 'અંગ્રેજી જરૂરી નથી.', pursuant: 'અનુસાર' },
+  'kn-IN': { eyebrow: 'ಪ್ರಕ್ರಿಯೆ',      title: 'ಮೂರು ನಿರ್ಧಿಷ್ಟ ಹಂತಗಳು — ', em: 'ಇಂಗ್ಲಿಷ್ ಬೇಕಿಲ್ಲ.', pursuant: 'ಅನುಸಾರ' },
+  'ml-IN': { eyebrow: 'നടപടിക്രമം',     title: 'മൂന്ന് ഘട്ടങ്ങൾ — ',        em: 'ഇംഗ്ലീഷ് വേണ്ട.', pursuant: 'അനുസരിച്ച്' },
+  'pa-IN': { eyebrow: 'ਪ੍ਰਕਿਰਿਆ',       title: 'ਤਿੰਨ ਕਦਮ — ',              em: 'ਅੰਗਰੇਜ਼ੀ ਦੀ ਲੋੜ ਨਹੀਂ।', pursuant: 'ਅਨੁਸਾਰ' },
+  'od-IN': { eyebrow: 'ପ୍ରକ୍ରିୟା',      title: 'ତିନୋଟି ନିର୍ଦ୍ଦିଷ୍ଟ ପଦକ୍ଷେପ — ', em: 'ଇଂରାଜୀ ଆବଶ୍ୟକ ନାହିଁ।', pursuant: 'ଅନୁସାରେ' },
 };
 
 export default function HowItWorks({ selectedLang = 'en-IN' }: HowItWorksProps) {
-  const isHindi = selectedLang === 'hi-IN';
   const copy = SECTION_COPY[selectedLang] ?? SECTION_COPY['en-IN']!;
 
   const fullSpeakText = STEPS.map(
-    (s) => `${isHindi ? s.titleHi : s.titleEn}. ${isHindi ? s.bodyHi : s.bodyEn}`
+    (s) => `${s.title[selectedLang] ?? s.title['en-IN']}. ${s.body[selectedLang] ?? s.body['en-IN']}`
   ).join(' ');
 
   return (
@@ -108,8 +94,8 @@ export default function HowItWorks({ selectedLang = 'en-IN' }: HowItWorksProps) 
         {/* Steps */}
         <div className="grid lg:grid-cols-3 gap-5 lg:gap-6">
           {STEPS.map((step, i) => {
-            const title = isHindi ? step.titleHi : step.titleEn;
-            const body  = isHindi ? step.bodyHi  : step.bodyEn;
+            const title = step.title[selectedLang] ?? step.title['en-IN'];
+            const body  = step.body[selectedLang] ?? step.body['en-IN'];
             return (
               <article
                 key={step.num}
@@ -132,9 +118,9 @@ export default function HowItWorks({ selectedLang = 'en-IN' }: HowItWorksProps) 
                   </div>
 
                   <div className="mb-3">
-                    <h3 lang={selectedLang} className="font-serif font-bold text-2xl text-white inline">{title}</h3>
+                     <h3 lang={selectedLang} className="font-serif font-bold text-2xl text-white inline">{title}</h3>
                     <span className="text-white/45 text-sm ml-2 font-normal">
-                      · {isHindi ? step.titleEn : step.titleHi}
+                      · {selectedLang === 'en-IN' ? step.title['hi-IN'] : step.title['en-IN']}
                     </span>
                   </div>
 
@@ -165,8 +151,8 @@ export default function HowItWorks({ selectedLang = 'en-IN' }: HowItWorksProps) 
         </div>
 
         <div className="mt-16 pt-10 border-t border-white/8">
-          <div className="authority-strip text-center">
-            Pursuant to BNSS 2023 &nbsp;·&nbsp; BNS 2023 &nbsp;·&nbsp; POCSO 2012 &nbsp;·&nbsp; PWDVA 2005 &nbsp;·&nbsp; MWPSC 2007 &nbsp;·&nbsp; DPDP 2023
+          <div className="authority-strip text-center" lang={selectedLang}>
+            {copy.pursuant} BNSS 2023 &nbsp;·&nbsp; BNS 2023 &nbsp;·&nbsp; POCSO 2012 &nbsp;·&nbsp; PWDVA 2005 &nbsp;·&nbsp; MWPSC 2007 &nbsp;·&nbsp; DPDP 2023
           </div>
         </div>
       </div>

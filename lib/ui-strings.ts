@@ -57,7 +57,8 @@ export type UIStringKey =
   | 'clearHistoryConfirm'
   | 'clearHistoryDone'
   | 'recordingTimer'
-  | 'namePlayback';
+  | 'namePlayback'
+  | 'journey';
 
 type LangMap = Record<string, string>;
 
@@ -644,6 +645,12 @@ const S: Record<UIStringKey, LangMap> = {
     'gu-IN': 'શું આ તમારું નામ છે?', 'kn-IN': 'ಇದು ನಿಮ್ಮ ಹೆಸರೇ?',
     'ml-IN': 'ഇതാണോ നിങ്ങളുടെ പേര്?', 'pa-IN': 'ਕੀ ਇਹ ਤੁਹਾਡਾ ਨਾਮ ਹੈ?',
     'od-IN': 'ଏହା ଆପଣଙ୍କ ନାମ?',
+  },
+  journey: {
+    'hi-IN': 'कानूनी यात्रा', 'en-IN': 'Legal Journey', 'bn-IN': 'আইনি যাত্রা',
+    'ta-IN': 'சட்ட பயணம்', 'te-IN': 'న్యాయ ప్రయాణం', 'mr-IN': 'कायदेशीर वाटचाल',
+    'gu-IN': 'કાનૂની સફર', 'kn-IN': 'ಕಾನೂನು ಪ್ರಯಾಣ', 'ml-IN': 'നിയമ യാത്ര',
+    'pa-IN': 'ਕਾਨੂੰਨੀ ਯਾਤਰਾ', 'od-IN': 'ଆଇନ ଯାତ୍ରା',
   },
 
 };
