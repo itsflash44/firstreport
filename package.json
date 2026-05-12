@@ -14,22 +14,25 @@
     "dev:all": "concurrently \"npm run dev\" \"npm run python:dev\""
   },
   "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "@supabase/ssr": "^0.5.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "dexie": "^4.4.2",
+    "nanoid": "^5.1.11",
     "next": "^14.2.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "@supabase/supabase-js": "^2.45.0",
-    "@supabase/ssr": "^0.5.0",
-    "@prisma/client": "^5.20.0"
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
-    "typescript": "^5.5.0",
     "@types/node": "^20.14.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
-    "tailwindcss": "^3.4.0",
-    "postcss": "^8.4.0",
     "autoprefixer": "^10.4.0",
+    "concurrently": "^9.0.0",
+    "postcss": "^8.4.0",
     "prisma": "^5.20.0",
-    "concurrently": "^9.0.0"
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.5.0"
   }
 }
