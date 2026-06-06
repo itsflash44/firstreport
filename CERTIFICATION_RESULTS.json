@@ -1,8 +1,0 @@
-{
-  "routingPreservation": "FAIL",
-  "contradictionDetection": "FAIL",
-  "ocr": "FAIL",
-  "truthTrail": "FAIL",
-  "pdfGeneration": "FAIL",
-  "crossDeviceRecovery": "FAIL"
-}

@@ -9,6 +9,38 @@ claude.md
 CLAUDE.md
 hh
 
+# Build / cache / generated artefacts
+.next/
+node_modules/
+.npm-cache/
+.vercel/
+output/
+playwright-report/
+test-results/
+graphify-out/
+*.log
+*.pid
+*.tsbuildinfo
+
+# Local debug screenshots and captures
+After_Navigation.png
+Before_Injection.png
+CasePage_Debug.png
+Create_Case.png
+History_Page.png
+Home_Dashboard.png
+Home_Demo.png
+Landing_Page_Load.png
+Login_Page.png
+
+# Generated / reports
+graphify-out/
+playwright-report/
+test-results/
+*.log
+*.pid
+.npm-cache/
+
 # Python
 __pycache__/
 *.py[cod]
