@@ -1,0 +1,296 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;700;900&family=Noto+Serif+Bengali:wght@400;700&family=Noto+Serif+Tamil:wght@400;700&family=Noto+Serif+Telugu:wght@400;700&family=Noto+Sans+Gujarati:wght@400;700&family=Noto+Sans+Kannada:wght@400;700&family=Noto+Sans+Malayalam:wght@400;700&family=Noto+Sans+Gurmukhi:wght@400;700&family=Noto+Sans+Oriya:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   FIRSTREPORT — OFFICIAL AUTHORITY DESIGN SYSTEM
+   Premium Legal-Tech: Official × Premium balance
+   Restraint IS the premium signal for legal.
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+  --navy-deep:  #0F1F3D;
+  --navy:       #1A2A44;
+  --teal:       #5FA8A0;
+  --gold:       #B8962E;
+  --ivory:      #F5F2EC;
+  --cool-gray:  #D9E2EC;
+  --off-white:  #F5F2EC;
+  --success:    #4CAF50;
+  --error:      #D9534F;
+  --warning:    #F0AD4E;
+  --text-primary:   #0F1F3D;
+  --text-secondary: #4A5568;
+  --text-muted:     #A0AEC0;
+  --shadow-xs:   0 1px 2px rgba(15,31,61,0.06);
+  --shadow-sm:   0 1px 4px rgba(15,31,61,0.08), 0 0 1px rgba(15,31,61,0.04);
+  --shadow-md:   0 4px 12px rgba(15,31,61,0.10), 0 1px 3px rgba(15,31,61,0.06);
+  --shadow-lg:   0 8px 24px rgba(15,31,61,0.13), 0 2px 6px rgba(15,31,61,0.07);
+  --shadow-xl:   0 16px 40px rgba(15,31,61,0.15), 0 4px 10px rgba(15,31,61,0.08);
+  --shadow-card: 0 2px 8px rgba(15,31,61,0.08), 0 0 1px rgba(15,31,61,0.05);
+  --shadow-lift: 0 8px 28px rgba(15,31,61,0.14), 0 2px 8px rgba(15,31,61,0.08);
+  --glass-bg:     rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.12);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+
+/* ── TOUCH OPTIMISATION (Android Galaxy A03 / Samsung Internet) ───────
+   touch-action: manipulation eliminates the 300 ms double-tap-to-zoom
+   delay on Android, making every button & link feel instantly responsive.
+   This is the single highest-impact mobile perf win in this file.      */
+button, a, [role="button"], label[for], summary {
+  touch-action: manipulation;
+}
+
+/* ── SAFE AREA INSETS (iPhone notch / Dynamic Island / home indicator) ─*/
+/* Apply as a utility class: <footer className="safe-bottom"> */
+.safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+.safe-bottom-only {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── MINIMUM TOUCH TARGETS (WCAG 2.5.5 — 44 × 44 CSS px) ────────────
+   Galaxy A03 has a 6.5" 720p screen (≈ 165 dpi).
+   CSS px ≈ device px on that screen, so 44px CSS = comfortable tap.    */
+.touch-target {
+  min-width:  44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+html, body {
+  background-color: var(--ivory);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               'Noto Sans Gujarati', 'Noto Sans Kannada', 'Noto Sans Malayalam',
+               'Noto Sans Gurmukhi', 'Noto Sans Oriya', sans-serif;
+  font-weight: 400;
+  min-height: 100dvh;
+}
+
+/* ── FONT UTILITIES ────────────────────────────────────── */
+.font-serif   { font-family: 'Playfair Display', Georgia, serif; }
+.font-body    { font-family: 'Inter', -apple-system, sans-serif; }
+.font-sans    { font-family: 'Inter', -apple-system, sans-serif; }
+.font-mono    { font-family: 'JetBrains Mono', Menlo, monospace; }
+.font-display { font-family: 'Playfair Display', Georgia, serif; letter-spacing: -0.02em; }
+
+/* ── SELECTION ─────────────────────────────────────────── */
+::selection { background: var(--navy); color: #FFFFFF; }
+
+/* ── FOCUS ─────────────────────────────────────────────── */
+input, textarea, select { font-family: 'Inter', -apple-system, sans-serif; }
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: none; border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(95,168,160,0.15);
+}
+button:focus-visible, a:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+
+/* ── GRADIENT TEXT — HERO HEADLINE ONLY ──────────────────
+   Never apply to body copy, section headings, or cards.   */
+.gradient-headline {
+  background: linear-gradient(90deg, #5FA8A0 0%, #B8962E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: #5FA8A0; /* Safari fallback */
+}
+
+/* ── GLASS CARD — max 8px blur, very restrained ──────────*/
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.glass-mid {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.glass-nav {
+  background: rgba(245,242,236,0.92);
+  border-bottom: 1px solid rgba(217,226,236,0.7);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* ── SCROLL REVEAL ─────────────────────────────────────── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+}
+.scroll-reveal.revealed { opacity: 1; transform: translateY(0); }
+
+/* ── STATUTE CITATION CHIP ─────────────────────────────── */
+.citation-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'JetBrains Mono', Menlo, monospace;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 3px 8px;
+  border-radius: 2px; border: 1px solid;
+}
+.citation-chip-dark  { background: rgba(95,168,160,0.08); border-color: rgba(95,168,160,0.25); color: #5FA8A0; }
+.citation-chip-light { background: rgba(15,31,61,0.05);  border-color: rgba(15,31,61,0.15);  color: #1A2A44; }
+.citation-chip-gold  { background: rgba(184,150,46,0.08); border-color: rgba(184,150,46,0.30); color: #B8962E; }
+
+/* ── AUTHORITY STRIP ───────────────────────────────────── */
+.authority-strip {
+  font-family: 'JetBrains Mono', Menlo, monospace;
+  font-size: 9px; font-weight: 500; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(95,168,160,0.88);
+}
+
+/* ── OFFICIAL CARD (light sections) ───────────────────── */
+.fr-card {
+  background: #FFFFFF; border: 1px solid var(--cool-gray);
+  border-radius: 4px; box-shadow: var(--shadow-card);
+  transition: box-shadow 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+.fr-card:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); }
+
+/* ── SECTION LABELS ────────────────────────────────────── */
+.section-label {
+  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-secondary);
+}
+.section-label-dark {
+  font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.28em; text-transform: uppercase; color: rgba(95,168,160,0.6);
+}
+
+/* ── BUTTONS ───────────────────────────────────────────── */
+.fr-btn-primary {
+  background: var(--teal); color: #FFFFFF; border-radius: 4px; font-weight: 600;
+  transition: background 0.5s ease-in-out, box-shadow 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+.fr-btn-primary:hover { background: #4D9990; box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.fr-btn-primary:active { transform: scale(0.98); box-shadow: none; }
+
+.fr-btn-navy {
+  background: var(--navy-deep); color: #FFFFFF; border-radius: 4px; font-weight: 600;
+  transition: background 0.5s ease-in-out, box-shadow 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+.fr-btn-navy:hover { background: #1A2A44; box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+.fr-btn-ghost {
+  background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; font-weight: 500;
+  transition: background 0.5s ease-in-out, border-color 0.5s ease-in-out;
+}
+.fr-btn-ghost:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); }
+
+.fr-btn-teal {
+  background: var(--teal); color: #FFFFFF; border-radius: 4px; font-weight: 600;
+  transition: background 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+}
+.fr-btn-teal:hover { background: #4D9990; box-shadow: var(--shadow-md); }
+
+/* ── INPUT ─────────────────────────────────────────────── */
+.fr-input {
+  border: 1px solid var(--cool-gray); border-radius: 4px;
+  background: #FFFFFF; font-family: 'Inter', sans-serif;
+  transition: border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+}
+.fr-input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(95,168,160,0.15); }
+
+/* ── STATUS BADGES ─────────────────────────────────────── */
+.badge-success { background: rgba(76,175,80,0.10);  color: #388E3C; border: 1px solid rgba(76,175,80,0.25);  border-radius: 2px; }
+.badge-error   { background: rgba(217,83,79,0.10);  color: #C0392B; border: 1px solid rgba(217,83,79,0.25);  border-radius: 2px; }
+.badge-teal    { background: rgba(95,168,160,0.10); color: #3D8C85; border: 1px solid rgba(95,168,160,0.25); border-radius: 2px; }
+.badge-navy    { background: rgba(15,31,61,0.06);   color: #0F1F3D; border: 1px solid rgba(15,31,61,0.18);   border-radius: 2px; }
+.badge-warning { background: rgba(240,173,78,0.10); color: #B7760D; border: 1px solid rgba(240,173,78,0.25); border-radius: 2px; }
+.badge-gold    { background: rgba(184,150,46,0.10); color: #8C7020; border: 1px solid rgba(184,150,46,0.30); border-radius: 2px; }
+
+/* ── COURT-ORDER CARD ──────────────────────────────────── */
+.court-order-card {
+  background: #FFFFFF; border: 1px solid var(--cool-gray);
+  border-top: 3px solid var(--gold); border-radius: 4px;
+  box-shadow: var(--shadow-md); position: relative; overflow: hidden;
+}
+.court-order-card::before {
+  content: '§';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 220px; font-weight: 900;
+  color: rgba(184,150,46,0.04);
+  pointer-events: none; user-select: none; line-height: 1;
+}
+
+/* ── MARQUEE ───────────────────────────────────────────── */
+.marquee-track:hover .marquee-inner { animation-play-state: paused; }
+
+/* ── STAT COUNTER ──────────────────────────────────────── */
+.stat-counter {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── DIVIDERS ──────────────────────────────────────────── */
+.hairline      { height: 1px; background: var(--cool-gray); border: 0; opacity: 0.8; }
+.hairline-dark { height: 1px; background: rgba(255,255,255,0.08); border: 0; }
+.legal-rule    { height: 1px; background: linear-gradient(90deg, var(--gold) 0%, transparent 100%); border: 0; opacity: 0.4; }
+
+/* ── MISC ──────────────────────────────────────────────── */
+.severity-critical { background: var(--error); color: #FFFFFF; border-radius: 2px; }
+.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ── REDUCED MOTION ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal, .scroll-reveal.revealed { opacity: 1; transform: none; transition: none; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ── KEYFRAMES ─────────────────────────────────────────── */
+@keyframes reveal    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes revealUp  { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes popIn     { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes slideUp   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rec       { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes wave      { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+@keyframes pulseSquare { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.04); opacity: 0.88; } }
+@keyframes marquee   { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes ring      { from { transform: scale(1); opacity: 0.7; } to { transform: scale(2.2); opacity: 0; } }
+@keyframes shimmer   { from { background-position: -200% center; } to { background-position: 200% center; } }
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+/* Mobile sidebar slide animation — only on small screens */
+.animate-slide-in-right {
+  animation: slideInRight 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ── SCROLLBAR ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--cool-gray); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #B0BEC5; }
+
+/* ── INDIC SCRIPT TYPOGRAPHY ──────────────────────────── */
+/* Prevent ascender/descender clipping for complex scripts */
+[lang="bn-IN"], [lang="te-IN"], [lang="ml-IN"],
+[lang="ta-IN"], [lang="kn-IN"], [lang="gu-IN"],
+[lang="pa-IN"], [lang="od-IN"], [lang="mr-IN"] {
+  line-height: 1.65;
+}
+[lang="bn-IN"] h1, [lang="te-IN"] h1, [lang="ml-IN"] h1,
+[lang="bn-IN"] h2, [lang="te-IN"] h2, [lang="ml-IN"] h2,
+[lang="bn-IN"] h3, [lang="te-IN"] h3, [lang="ml-IN"] h3 {
+  line-height: 1.25;
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "feature": "Landing Page Load",
+    "route": "/",
+    "status": "pass",
+    "error": null,
+    "api": null
+  },
+  {
+    "feature": "Create Case",
+    "route": "/",
+    "status": "pass",
+    "error": null,
+    "api": null
+  },
+  {
+    "feature": "Login Page",
+    "route": "/login",
+    "status": "pass",
+    "error": null,
+    "api": null
+  },
+  {
+    "feature": "Home Dashboard",
+    "route": "/home",
+    "status": "pass",
+    "error": null,
+    "api": null
+  },
+  {
+    "feature": "History Page",
+    "route": "/history",
+    "status": "pass",
+    "error": null,
+    "api": null
+  }
+]

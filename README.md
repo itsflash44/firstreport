@@ -1,154 +1,480 @@
-# FirstReport: AI-Powered Legal Assistant & Escalation Platform
+# FirstReport
 
-FirstReport is an advanced, highly-accessible, AI-powered legal assistant designed specifically to tackle the massive issue of unregistered cognizable offenses in India. When police refuse to file an FIR (First Information Report), FirstReport empowers victims—especially marginalized and illiterate individuals—to exercise their rights under the newly enacted **Bharatiya Nagarik Suraksha Sanhita (BNSS)**.
+<p align="center">
+  <strong>AI-powered legal assistance for citizen stories, evidence, timelines, and court-ready documentation.</strong>
+</p>
 
-## Why FirstReport?
-
-Every year, an estimated 30–40 million cognizable offenses go unregistered in India, primarily due to police refusal to file FIRs. While the new BNSS (which replaced the CrPC on July 1, 2024) strengthened victim escalation rights, there has been no offline-capable, accessible tool to guide victims through this complex legal chain. 
-
-FirstReport bridges this gap by acting as an **expert criminal lawyer in your pocket**. 
-
-### Target Audience
-Designed for users with low literacy, limited tech-savvy, and intermittent internet access (e.g., domestic workers, daily wage laborers) using budget smartphones.
-
----
-
-## What It Does (Key Features)
-
-### 1. Organic, Highly Accessible UI (Wabi-Sabi Theme)
-The frontend is built with a premium, tactile "Organic/Natural" design system. 
-- **No Typing Required:** Users can interact entirely through voice.
-- **Auto-Dictation (Text-To-Speech):** To support illiterate users, a pulsing, organic floating button uses the native Web Speech API to read aloud all the information on the screen in the user's native language. 
-- **Micro-Animations:** Fluid, 3D-like background CSS blobs and tactile card "lifting" effects provide a calming, premium user experience.
-
-### 2. Interactive AI Clarification Loop
-Instead of relying on a single, potentially vague voice recording, FirstReport acts like a real lawyer:
-- It transcribes the audio using **Sarvam STT**.
-- It analyzes the transcript. If vital legal details (like the time of the event, location, or sequence of actions) are missing, the AI generates a **single, empathetic follow-up question**.
-- The app automatically dictates this question to the user.
-- The user responds via microphone, and the AI merges both statements into a highly detailed narrative.
-
-### 3. BNSS Offense Classification (Gemma 4 Pipeline)
-The app uses Google's Gemma 4 (4B-Instruct) model to cross-reference the user's narrative against the **BNSS Schedule 1 Database**.
-- It identifies the specific BNSS Section violated.
-- It determines if the offense is **Cognizable** (mandatory FIR) or **Non-Cognizable**.
-- It extracts entities (Victim Name, Police Station, Date).
-- *Vision Capability:* Users can upload a photo of a Police Station Notice Board, and the AI will extract the duty officer's name and batch number.
-
-### 4. Multi-Language PDF Document Generation
-FirstReport automatically drafts **4 formal legal documents** acting as an escalation chain:
-1. **SP Complaint:** Addressed to the Superintendent of Police under Section 166 BNSS.
-2. **DM Petition:** Addressed to the District Magistrate under Section 175(3) BNSS.
-3. **HC Writ:** A draft writ petition for the High Court under Article 226 of the Constitution.
-4. **Officer Accountability Complaint:** A specific complaint targeting the police officer who refused the FIR, citing dereliction of duty.
-
-**No More Square Blocks:** The app dynamically downloads and utilizes Google Noto Sans fonts for Bengali, Tamil, Telugu, Hindi, and English. The AI drafts the legal narrative comprehensively in the exact language chosen by the user, and the PDF renders flawlessly.
-
-### 5. Offline-First Telegram Sync
-If the user is in an area with poor connectivity, generated documents are securely cached locally via SQLite. Once the network is restored, a background queue automatically delivers the PDFs to a predefined Telegram bot.
+<p align="center">
+  <a href="https://nextjs.org/">
+    <img alt="Next.js" src="https://img.shields.io/badge/Next.js-App%20Router-black?style=for-the-badge&logo=nextdotjs" />
+  </a>
+  <a href="https://react.dev/">
+    <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
+  </a>
+  <a href="https://www.typescriptlang.org/">
+    <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Ready-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  </a>
+  <a href="https://supabase.com/">
+    <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Backend-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" />
+  </a>
+  <img alt="Offline first" src="https://img.shields.io/badge/Offline--First-Architecture-7C3AED?style=for-the-badge" />
+  <img alt="Hackathon" src="https://img.shields.io/badge/Google%20%2F%20Gemma-Hackathon-4285F4?style=for-the-badge&logo=google&logoColor=white" />
+</p>
 
 ---
 
-## How It Works (Architecture & Tech Stack)
+## Overview
 
-The architecture is explicitly designed to be **lightweight, fast, and dependency-free on the frontend**.
+FirstReport is an AI-powered legal assistance platform built for the Google/Gemma Hackathon. It helps ordinary citizens convert a single spoken or written account into structured legal facts, evidence trails, timelines, contradiction checks, readiness signals, and court-ready outputs.
 
-### Backend (Python / FastAPI)
-- **FastAPI:** Handles all API requests asynchronously.
-- **Transformers (Hugging Face) / Google Generative AI:** Powers the Gemma 4 pipeline for classification, extraction, and narrative drafting. (Can run entirely locally or fallback to Gemini API).
-- **ReportLab:** Dynamically generates the legal PDFs, mapping specific language codes to `.ttf` font files.
-- **SQLite:** Acts as a local cache for offline capabilities and BNSS Schedule 1 data.
+The platform is designed for situations where people lose legal protection not because their case lacks merit, but because they lack legal knowledge, documentation discipline, procedural awareness, or evidence organization.
 
-### Frontend (Vanilla HTML / CSS / JS)
-- **Zero Build Step:** No React, no Vite, no Node.js required to run the frontend. It is 100% vanilla web technology.
-- **CSS:** Broken down into `design-tokens.css` (variables, typography), `components.css` (buttons, cards), and `utilities.css` (layout, background blob animations).
-- **JS:** `app.js` handles state management, Web Speech API dictation, MediaRecorder audio capture, and API orchestration.
+> A citizen tells their story once. FirstReport turns that story into a structured legal pathway.
 
 ---
 
-## How to Build & Run It Yourself
+## Problem Statement
 
-Even if you know nothing about this stack, follow these steps to get FirstReport running on your local machine.
+Legal systems are difficult to navigate for citizens without access to trained counsel. Many people face avoidable legal setbacks because they:
 
-### Prerequisites
-1. **Python 3.10+** installed on your system.
-2. **Git** (optional, but helpful).
-3. A Hugging Face account (if running Gemma 4 locally) OR a Google Gemini API Key (recommended for fast testing).
+- Do not know which facts matter legally
+- Miss important dates, names, locations, or procedural steps
+- Submit incomplete or poorly organized evidence
+- Fail to identify contradictions before an opponent does
+- Cannot convert their story into formal legal documents
+- Lose continuity when switching devices, networks, or support channels
 
-### Step 1: Clone or Download the Project
-Ensure you are in the root directory of `firstReport` (where this README is located).
-
-### Step 2: Set Up a Python Virtual Environment
-It is best practice to install Python dependencies in an isolated environment.
-```bash
-# Create the environment
-python3 -m venv venv
-
-# Activate it (Mac/Linux)
-source venv/bin/activate
-
-# Activate it (Windows)
-venv\Scripts\activate
-```
-
-### Step 3: Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-*(If `requirements.txt` is missing, you will need: `fastapi`, `uvicorn`, `python-multipart`, `reportlab`, `pillow`, `transformers`, `torch`, `google-generativeai`, `python-dotenv`, `requests`)*
-
-### Step 4: Configure Environment Variables
-Create a file named `.env` in the root directory. Add the following:
-```ini
-# Recommended: Use Gemini API for fast, cloud-based inference
-GEMINI_API_KEY=your_gemini_api_key_here
-
-# Optional: Sarvam API for specialized Hindi STT (will fallback to browser if not set)
-SARVAM_API_KEY=your_sarvam_key_here
-
-# Optional: Telegram bot integration for offline queue sending
-TELEGRAM_BOT_TOKEN=your_bot_token
-TELEGRAM_CHAT_ID=your_chat_id
-```
-
-### Step 5: Start the Backend Server
-Run the FastAPI application using Uvicorn.
-```bash
-uvicorn backend.main:app --reload --port 8000
-```
-*Note: If port 8000 is in use, you can change it to `--port 8001` or any other available port.*
-
-### Step 6: Access the Application
-Open your web browser (Chrome or Safari recommended for microphone access) and navigate to:
-```
-http://127.0.0.1:8000
-```
-*(Or whichever port you specified).*
+FirstReport addresses this gap by making legal preparation structured, explainable, evidence-aware, and resilient.
 
 ---
 
-## Project Structure Overview
+## Solution
+
+FirstReport acts as an AI legal preparation layer between a citizen's raw story and formal legal action.
+
+The system:
+
+- Extracts relevant facts from the citizen's narrative
+- Detects contradictions and missing details
+- Builds a chronological legal timeline
+- Tracks documents, identity proofs, and evidence items
+- Creates a persistent case memory
+- Produces a TruthTrail for traceable reasoning
+- Generates legal documents and PDF outputs
+- Assesses case readiness before escalation
+- Supports offline-first storage and recovery workflows
+
+---
+
+## Core Workflow
+
+```text
+Citizen Story
+  -> AI Analysis
+  -> Fact Extraction
+  -> Contradiction Detection
+  -> Timeline Generation
+  -> Evidence Tracking
+  -> TruthTrail
+  -> Legal Document Generation
+```
+
+---
+
+## Key Features
+
+### 1. AI Legal Assistant
+
+Guides citizens through the process of describing incidents, clarifying missing facts, and preparing structured legal outputs.
+
+### 2. OCR Document Processing
+
+Uses OCR to process uploaded documents and extract readable text for downstream case analysis.
+
+### 3. Aadhaar and PAN Detection
+
+Detects identity-document patterns to support verification workflows and document-readiness checks.
+
+### 4. Fact Extraction
+
+Extracts legally relevant entities such as people, dates, places, actions, documents, claims, and supporting evidence.
+
+### 5. Contradiction Detection Engine
+
+Compares statements, document contents, timelines, and prior case memory to identify inconsistencies before submission.
+
+### 6. TruthTrail System
+
+Creates a traceable chain from source story to facts, timeline events, evidence items, and generated legal outputs.
+
+### 7. Legal Timeline Builder
+
+Transforms unstructured stories into chronological timelines that can be reviewed, corrected, and used for formal documents.
+
+### 8. Case Memory Engine
+
+Maintains persistent case context so a user's story, documents, evidence, and generated outputs remain connected.
+
+### 9. Offline-First Storage
+
+Uses local-first persistence patterns so citizens can continue work despite unstable connectivity.
+
+### 10. PDF Legal Document Generation
+
+Generates structured PDF outputs suitable for review, printing, sharing, and legal escalation.
+
+### 11. Cross-Device Recovery Architecture
+
+Supports recovery-oriented workflows so citizens are not locked to one device or one session.
+
+### 12. Evidence Management
+
+Tracks evidence items, document quality, identity documents, extracted text, and readiness status.
+
+---
+
+## Architecture
+
+```text
+┌─────────────────────┐
+│   Citizen Story     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│     AI Analysis     │
+│ Gemini / Gemma      │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│  Fact Extraction    │
+│ entities + claims   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Contradiction Check │
+│ story + docs + mem  │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Timeline Generation │
+│ legal chronology    │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Evidence Tracking   │
+│ files + OCR + IDs   │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│     TruthTrail      │
+│ source to output    │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ Legal Document PDFs │
+│ court-ready output  │
+└─────────────────────┘
+```
+
+### Application Layers
+
+```text
+Frontend
+  Next.js App Router, React, TypeScript
+
+AI and Intelligence
+  Gemini / Gemma models, fact extraction, contradiction checks, timeline logic
+
+OCR and Document Processing
+  Tesseract.js, document parsing, identity pattern detection
+
+Storage
+  Supabase, Prisma, Dexie, offline queue, case memory
+
+Document Generation
+  Puppeteer PDF generation and structured legal templates
+```
+
+---
+
+## Technology Stack
+
+| Area | Technologies |
+| --- | --- |
+| Framework | Next.js App Router |
+| UI | React, TypeScript |
+| Styling | Tailwind CSS |
+| Database and Auth | Supabase |
+| ORM | Prisma |
+| Offline Storage | Dexie, IndexedDB |
+| OCR | Tesseract.js |
+| AI Models | Gemini / Gemma |
+| PDF Generation | Puppeteer |
+| Testing | Playwright |
+| Architecture | Offline-first, recovery-oriented, case-memory-driven |
+
+---
+
+## Folder Structure
 
 ```text
 firstReport/
-├── backend/
-│   └── main.py              # FastAPI server, endpoints (/api/clarify, /api/classify)
-├── core/
-│   ├── gemma_pipeline.py    # AI prompts for Clarification, Classification, and Narratives
-│   ├── schemas.py           # Pydantic data models
-│   ├── sarvam_stt.py        # Speech-to-text integration
-│   └── entity_extractor.py  # Utility for parsing AI JSON outputs
-├── frontend/
-│   ├── index.html           # Main UI shell (Language, Clarification, Classification screens)
-│   ├── css/                 # Vanilla CSS architecture (tokens, components, utilities)
-│   └── js/                  # app.js (state management, Web Speech API, recording logic)
-├── legal/
-│   ├── doc_generator.py           # ReportLab PDF generator (multi-language font logic)
-│   ├── officer_accountability.py  # S.166 BNSS specific PDF generator
-│   └── bnss_classifier.py         # SQLite BNSS database integration
-├── offline/                 # Sync queue and Telegram sender logic
-└── data/                    # Downloaded .ttf fonts for PDF generation
+├── public/
+│   ├── icons/                 # PWA and app icons
+│   ├── screenshots/           # README and product screenshots
+│   └── sw.js                  # Service worker
+│
+├── prisma/
+│   └── schema.prisma          # Database schema
+│
+├── src/
+│   ├── app/                   # Next.js App Router pages and API routes
+│   │   ├── (app)/             # Authenticated app routes
+│   │   ├── (auth)/            # Authentication routes
+│   │   ├── api/               # Server-side API endpoints
+│   │   ├── case/              # Case-specific user flows
+│   │   ├── dashboard/         # Case dashboard views
+│   │   └── offline/           # Offline-first user flows
+│   │
+│   ├── components/            # Reusable UI and feature components
+│   │   ├── chat/              # AI assistant interface
+│   │   ├── documents/         # Document generation and review
+│   │   ├── intelligence/      # Analysis and insight components
+│   │   ├── landing/           # Public landing page
+│   │   ├── ocr/               # OCR upload and extraction UI
+│   │   ├── readiness/         # Case readiness views
+│   │   ├── timeline/          # Legal timeline UI
+│   │   ├── truthtrail/        # TruthTrail visualization
+│   │   └── verification/      # Identity and document verification
+│   │
+│   ├── core/                  # Core case intelligence logic
+│   ├── db/                    # Database helpers
+│   ├── hooks/                 # React hooks
+│   ├── lib/                   # Shared libraries and integrations
+│   ├── services/              # AI, OCR, sync, speech, and storage services
+│   ├── types/                 # TypeScript domain types
+│   └── utils/                 # Utility functions
+│
+├── tests/
+│   └── e2e/                   # End-to-end tests
+│
+├── documents/                 # Project documents
+├── migrations/                # Database migration helpers
+├── offline/                   # Offline sync utilities
+└── reports/                   # Report templates and supporting files
 ```
 
+---
+
+## Local Setup
+
+### Prerequisites
+
+- Node.js 18 or newer
+- npm
+- Supabase project
+- Database connection string
+- Gemini or Google AI API key
+
+### Installation
+
+```bash
+git clone https://github.com/your-username/firstreport.git
+cd firstreport
+npm install
+```
+
+### Configure Environment
+
+Create a local environment file:
+
+```bash
+cp .env.example .env.local
+```
+
+Update `.env.local` with your own local or hosted service credentials. Do not commit real secrets.
+
+### Database Setup
+
+```bash
+npm run prisma:generate
+npm run prisma:migrate
+```
+
+### Run Development Server
+
+```bash
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+### Build for Production
+
+```bash
+npm run build
+npm run start
+```
+
+---
+
+## Environment Variables
+
+Use placeholders only. Never commit real API keys, tokens, passwords, private database URLs, service-role keys, or OAuth secrets.
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+DATABASE_URL=postgresql://user:password@host:6543/database
+DIRECT_URL=postgresql://user:password@host:5432/database
+
+GEMINI_API_KEY=your_gemini_api_key
+GOOGLE_AI_API_KEY=your_google_ai_api_key
+
+NEXT_PUBLIC_SHOW_DEMO_BUTTON=false
+```
+
+Optional integrations may require additional provider-specific keys depending on deployment needs.
+
+---
+
+## Screenshots
+
+> Replace the placeholders below with current product screenshots.
+
+### Landing Page
+
+![FirstReport landing page](public/screenshots/landing-placeholder.png)
+
+### AI Legal Assistant
+
+![FirstReport AI legal assistant](public/screenshots/assistant-placeholder.png)
+
+### Legal Timeline
+
+![FirstReport legal timeline](public/screenshots/timeline-placeholder.png)
+
+### TruthTrail
+
+![FirstReport TruthTrail](public/screenshots/truthtrail-placeholder.png)
+
+### Evidence Management
+
+![FirstReport evidence management](public/screenshots/evidence-placeholder.png)
+
+---
+
+## Roadmap
+
+- [ ] Expand legal document templates across more case categories
+- [ ] Improve multilingual legal reasoning and explanation flows
+- [ ] Add richer contradiction severity scoring
+- [ ] Strengthen cross-device case recovery
+- [ ] Add collaborative review for legal aid workers
+- [ ] Introduce structured attorney handoff packets
+- [ ] Improve offline sync conflict resolution
+- [ ] Add review-ready export bundles for case handoff
+- [ ] Build stronger evidence-chain visualization
+- [ ] Support more regional legal workflows and language packs
+
+---
+
+## Future Vision
+
+FirstReport aims to become a citizen-first legal preparation platform that helps people preserve truth before it is distorted by time, fear, confusion, or procedural complexity.
+
+The long-term vision includes:
+
+- Guided legal intake for underserved citizens
+- AI-assisted evidence organization
+- Court-ready document preparation
+- Legal-aid worker dashboards
+- Multilingual case preparation
+- Strong privacy and offline resilience
+- Structured handoff to lawyers, NGOs, and public legal services
+
+FirstReport is not a replacement for legal counsel. It is a preparation layer that helps citizens arrive with clearer facts, stronger documents, better evidence, and a more reliable timeline.
+
+---
+
+## Google / Gemma Hackathon
+
+FirstReport was built for the Google/Gemma Hackathon to demonstrate how modern AI models can support high-impact legal access workflows.
+
+The project showcases:
+
+- AI-guided legal intake
+- Structured fact extraction
+- Contradiction detection
+- Timeline generation
+- OCR-enhanced evidence processing
+- Case memory and recovery architecture
+- PDF generation for legal outputs
+- Offline-first design for real-world deployment constraints
+
+---
+
+## Contributing
+
+Contributions are welcome from engineers, designers, legal technologists, researchers, and open-source contributors.
+
+### How to Contribute
+
+1. Fork the repository
+2. Create a feature branch
+3. Make a focused change
+4. Add or update tests where appropriate
+5. Open a pull request with a clear explanation
+
+### Contribution Areas
+
+- Legal workflow design
+- Accessibility and multilingual UX
+- OCR accuracy improvements
+- Offline-first architecture
+- Evidence management
+- AI safety and evaluation
+- Document generation
+- UI design and frontend performance
+
+---
+
+## Security and Privacy
+
+FirstReport handles sensitive legal and identity-related information. Contributors and deployers should follow strict security practices:
+
+- Never commit real secrets
+- Use environment variables for credentials
+- Keep service-role keys server-side only
+- Protect generated legal documents
+- Minimize unnecessary data retention
+- Review integrations before production deployment
+- Use secure storage, transport, and access controls
+
+---
+
+## License
+
+This project is currently provided for hackathon, research, and portfolio review purposes.
+
+If you plan to reuse, deploy, or distribute FirstReport, add an explicit license file and confirm legal, privacy, and jurisdiction-specific compliance requirements before production use.
+
+---
+
 ## Disclaimer
-FirstReport is a technical demonstration and prototype. The documents generated by the AI are drafts and do not constitute formal legal advice. Users are always prompted within the application to contact the National Legal Services Authority (NALSA) helpline at 15100 before submitting any legal documents.
+
+FirstReport is a legal technology project and does not replace a licensed lawyer, legal aid authority, court, or government process. Outputs should be reviewed by qualified professionals before filing or relying on them in legal proceedings.
