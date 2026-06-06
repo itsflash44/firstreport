@@ -1,0 +1,180 @@
+[WebServer] 
+[WebServer] > firstReport@1.0.0 start
+[WebServer] > next start
+[WebServer] 
+[WebServer]   [1m[38;2;173;127;168m▲ Next.js 14.2.35[39m[22m
+[WebServer]   - Local:        http://localhost:3000
+[WebServer] 
+[WebServer]  [32m[1m✓[22m[39m Starting...
+[WebServer]  [32m[1m✓[22m[39m Ready in 173ms
+
+Running 1 test using 1 worker
+
+[WebServer] [legal-journey] Supabase upsert error (non-fatal): TypeError: fetch failed
+[WebServer] [legal-journey] Supabase upsert error (non-fatal): TypeError: fetch failed
+[WebServer] [AI] Gemma failed (status 404) — trying Gemini Flash: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemma-3-4b-it:generateContent: [404 Not Found] models/gemma-3-4b-it is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+[WebServer] [DB] createSession failed: PrismaClientInitializationError: 
+[WebServer] Invalid `prisma.user.upsert()` invocation:
+[WebServer] 
+[WebServer] 
+[WebServer] Error querying the database: FATAL: (ENOTFOUND) tenant/user postgres.lrjsehyaownymovryeru not found
+[WebServer]     at $n.handleRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:7615[90m)[39m
+[WebServer]     at $n.handleAndLogRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6623[90m)[39m
+[WebServer]     at $n.request [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6307[90m)[39m
+[WebServer]     at async l [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:130:9633[90m)[39m
+[WebServer]     at async r [90m(/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:38:6910[90m)[39m
+[WebServer]     at async [90m/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:16:849 {
+[WebServer]   clientVersion: [32m'5.22.0'[39m,
+[WebServer]   errorCode: [90mundefined[39m
+[WebServer] }
+[WebServer] [AI] Gemini rate-limited — waiting 3s then retrying…
+[WebServer] [AI] Gemini Flash also failed (status 429): [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+[WebServer] Please retry in 48.250014621s. [{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"48s"}]
+[WebServer] [AI] All model attempts failed — returning offline fallback
+[WebServer] [AI] Gemma failed (status 404) — trying Gemini Flash: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemma-3-4b-it:generateContent: [404 Not Found] models/gemma-3-4b-it is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+[WebServer] [AI] Gemini rate-limited — waiting 3s then retrying…
+[WebServer] [DB] createSession failed: PrismaClientInitializationError: 
+[WebServer] Invalid `prisma.user.upsert()` invocation:
+[WebServer] 
+[WebServer] 
+[WebServer] Error querying the database: FATAL: (ENOTFOUND) tenant/user postgres.lrjsehyaownymovryeru not found
+[WebServer]     at $n.handleRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:7615[90m)[39m
+[WebServer]     at $n.handleAndLogRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6623[90m)[39m
+[WebServer]     at $n.request [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6307[90m)[39m
+[WebServer]     at async l [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:130:9633[90m)[39m
+[WebServer]     at async r [90m(/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:38:6910[90m)[39m
+[WebServer]     at async [90m/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:16:849 {
+[WebServer]   clientVersion: [32m'5.22.0'[39m,
+[WebServer]   errorCode: [90mundefined[39m
+[WebServer] }
+[WebServer] [AI] Gemini Flash also failed (status 429): [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+[WebServer] Please retry in 44.058715635s. [{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"44s"}]
+[WebServer] [AI] All model attempts failed — returning offline fallback
+[WebServer] [AI] Gemma failed (status 404) — trying Gemini Flash: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemma-3-4b-it:generateContent: [404 Not Found] models/gemma-3-4b-it is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+[WebServer] [AI] Gemini rate-limited — waiting 3s then retrying…
+[WebServer] [DB] createSession failed: PrismaClientInitializationError: 
+[WebServer] Invalid `prisma.user.upsert()` invocation:
+[WebServer] 
+[WebServer] 
+[WebServer] Error querying the database: FATAL: (ENOTFOUND) tenant/user postgres.lrjsehyaownymovryeru not found
+[WebServer]     at $n.handleRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:7615[90m)[39m
+[WebServer]     at $n.handleAndLogRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6623[90m)[39m
+[WebServer]     at $n.request [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6307[90m)[39m
+[WebServer]     at async l [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:130:9633[90m)[39m
+[WebServer]     at async r [90m(/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:38:6910[90m)[39m
+[WebServer]     at async [90m/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:16:849 {
+[WebServer]   clientVersion: [32m'5.22.0'[39m,
+[WebServer]   errorCode: [90mundefined[39m
+[WebServer] }
+[WebServer] [AI] Gemini Flash also failed (status 429): [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] Please retry in 39.75495626s. [{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"model":"gemini-2.0-flash","location":"global"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-2.0-flash","location":"global"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"39s"}]
+[WebServer] [AI] All model attempts failed — returning offline fallback
+[WebServer] [AI] Gemma failed (status 404) — trying Gemini Flash: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemma-3-4b-it:generateContent: [404 Not Found] models/gemma-3-4b-it is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+[WebServer] [AI] Gemini rate-limited — waiting 3s then retrying…
+[WebServer] [DB] createSession failed: PrismaClientInitializationError: 
+[WebServer] Invalid `prisma.user.upsert()` invocation:
+[WebServer] 
+[WebServer] 
+[WebServer] Error querying the database: FATAL: (ENOTFOUND) tenant/user postgres.lrjsehyaownymovryeru not found
+[WebServer]     at $n.handleRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:7615[90m)[39m
+[WebServer]     at $n.handleAndLogRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6623[90m)[39m
+[WebServer]     at $n.request [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6307[90m)[39m
+[WebServer]     at async l [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:130:9633[90m)[39m
+[WebServer]     at async r [90m(/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:38:6910[90m)[39m
+[WebServer]     at async [90m/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:16:849 {
+[WebServer]   clientVersion: [32m'5.22.0'[39m,
+[WebServer]   errorCode: [90mundefined[39m
+[WebServer] }
+[WebServer] Fetch documents error: PrismaClientInitializationError: 
+[WebServer] Invalid `prisma.caseDocument.findMany()` invocation:
+[WebServer] 
+[WebServer] 
+[WebServer] Error querying the database: FATAL: (ENOTFOUND) tenant/user postgres.lrjsehyaownymovryeru not found
+[WebServer]     at $n.handleRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:7615[90m)[39m
+[WebServer]     at $n.handleAndLogRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6623[90m)[39m
+[WebServer]     at $n.request [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6307[90m)[39m
+[WebServer]     at async l [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:130:9633[90m)[39m
+[WebServer]     at async p [90m(/Users/flash/Desktop/firstReport/[39m.next/server/app/api/documents/route.js:1:701[90m)[39m
+[WebServer]     at async [90m/Users/flash/Desktop/firstReport/[39mnode_modules/[4mnext[24m/dist/compiled/next-server/app-route.runtime.prod.js:6:38411
+[WebServer]     at async e_.execute [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4mnext[24m/dist/compiled/next-server/app-route.runtime.prod.js:6:27880[90m)[39m
+[WebServer]     at async e_.handle [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4mnext[24m/dist/compiled/next-server/app-route.runtime.prod.js:6:39943[90m)[39m
+[WebServer]     at async doRender [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4mnext[24m/dist/server/base-server.js:1366:42[90m)[39m
+[WebServer]     at async cacheEntry.responseCache.get.routeKind [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4mnext[24m/dist/server/base-server.js:1588:28[90m)[39m {
+[WebServer]   clientVersion: [32m'5.22.0'[39m,
+[WebServer]   errorCode: [90mundefined[39m
+[WebServer] }
+[WebServer] [AI Vision] Failed (status 429): [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+[WebServer] Please retry in 35.285761028s. [{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"35s"}]
+[WebServer] [VerifyDoc] Prisma save failed (non-fatal): PrismaClientInitializationError: 
+[WebServer] Invalid `prisma.caseDocument.create()` invocation:
+[WebServer] 
+[WebServer] 
+[WebServer] Error querying the database: FATAL: (ENOTFOUND) tenant/user postgres.lrjsehyaownymovryeru not found
+[WebServer]     at $n.handleRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:7615[90m)[39m
+[WebServer]     at $n.handleAndLogRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6623[90m)[39m
+[WebServer]     at $n.request [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6307[90m)[39m
+[WebServer]     at async l [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:130:9633[90m)[39m
+[WebServer]     at async u [90m(/Users/flash/Desktop/firstReport/[39m.next/server/app/api/verify-document/route.js:1:1165[90m)[39m
+[WebServer]     at async Promise.all (index 1) {
+[WebServer]   clientVersion: [32m'5.22.0'[39m,
+[WebServer]   errorCode: [90mundefined[39m
+[WebServer] }
+[WebServer] [AI] Gemini Flash also failed (status 429): [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+[WebServer] Please retry in 35.444443355s. [{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"model":"gemini-2.0-flash","location":"global"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"model":"gemini-2.0-flash","location":"global"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"35s"}]
+[WebServer] [AI] All model attempts failed — returning offline fallback
+[WebServer] [AI] Gemma failed (status 404) — trying Gemini Flash: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemma-3-4b-it:generateContent: [404 Not Found] models/gemma-3-4b-it is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+[WebServer] [AI] Gemini rate-limited — waiting 3s then retrying…
+[WebServer] [DB] createSession failed: PrismaClientInitializationError: 
+[WebServer] Invalid `prisma.user.upsert()` invocation:
+[WebServer] 
+[WebServer] 
+[WebServer] Error querying the database: FATAL: (ENOTFOUND) tenant/user postgres.lrjsehyaownymovryeru not found
+[WebServer]     at $n.handleRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:7615[90m)[39m
+[WebServer]     at $n.handleAndLogRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6623[90m)[39m
+[WebServer]     at $n.request [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6307[90m)[39m
+[WebServer]     at async l [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:130:9633[90m)[39m
+[WebServer]     at async r [90m(/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:38:6910[90m)[39m
+[WebServer]     at async [90m/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:16:849 {
+[WebServer]   clientVersion: [32m'5.22.0'[39m,
+[WebServer]   errorCode: [90mundefined[39m
+[WebServer] }
+[WebServer] [AI] Gemini Flash also failed (status 429): [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash
+[WebServer] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash
+[WebServer] Please retry in 31.535770717s. [{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"31s"}]
+[WebServer] [AI] All model attempts failed — returning offline fallback
+[WebServer] [AI] Gemma failed (status 404) — trying Gemini Flash: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemma-3-4b-it:generateContent: [404 Not Found] models/gemma-3-4b-it is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+[WebServer] [AI] Gemini rate-limited — waiting 3s then retrying…
+[WebServer] [DB] createSession failed: PrismaClientInitializationError: 
+[WebServer] Invalid `prisma.user.upsert()` invocation:
+[WebServer] 
+[WebServer] 
+[WebServer] Error querying the database: FATAL: (ENOTFOUND) tenant/user postgres.lrjsehyaownymovryeru not found
+[WebServer]     at $n.handleRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:7615[90m)[39m
+[WebServer]     at $n.handleAndLogRequestError [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6623[90m)[39m
+[WebServer]     at $n.request [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:121:6307[90m)[39m
+[WebServer]     at async l [90m(/Users/flash/Desktop/firstReport/[39mnode_modules/[4m@prisma/client[24m/runtime/library.js:130:9633[90m)[39m
+[WebServer]     at async r [90m(/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:38:6910[90m)[39m
+[WebServer]     at async [90m/Users/flash/Desktop/firstReport/[39m.next/server/app/api/clarify/route.js:16:849 {
+[WebServer]   clientVersion: [32m'5.22.0'[39m,
+[WebServer]   errorCode: [90mundefined[39m
+[WebServer] }
+  ✓  1 [Desktop Chrome] › tests/e2e/full-journey.spec.ts:7:5 › Production Validation Journey › End to End Journey (24.4s)
+
+  1 passed (25.9s)

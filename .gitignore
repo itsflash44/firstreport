@@ -2,6 +2,10 @@
 .env
 .env.local
 .env.production
+.env.template
+.env.templete
+claude.md
+CLAUDE.md
 hh
 
 # Python
