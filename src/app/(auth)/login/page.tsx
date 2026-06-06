@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useNavigationWithQuery } from '@/lib/useNavigationWithQuery';
 import { createClient } from '@/lib/supabase/client';
@@ -10,7 +10,7 @@ import { createCase } from '@/lib/legalJourney';
 
 type AuthTab = 'phone' | 'email';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useNavigationWithQuery();
   const supabase = createClient();
 
@@ -406,5 +406,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-off-white" />}>
+      <LoginContent />
+    </Suspense>
   );
 }

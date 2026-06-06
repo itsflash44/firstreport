@@ -77,7 +77,7 @@ graph TD
 *   **Google AI Studio API / Gemini API** receives all text generation and vision requests via the `@google/generative-ai` SDK client.
 
 ### 2. Which API key is being used?
-*   **`GEMINI_API_KEY`** (set to `AIzaSyB68oZhG1vy-2gmcRdEPogkq6yMu6vTNYo` in [.env.local](file:///Users/flash/Desktop/firstReport/.env.local)).
+*   **`GEMINI_API_KEY`** (configure it in [.env.local](/Users/flash/Desktop/firstReport/.env.local)).
 
 ### 3. Is `gemma-3-4b-it` supported by that provider?
 *   **No.** `gemma-3-4b-it` is an open-weights model. Hosted Google AI Studio / Gemini API endpoints (such as those queried under `v1beta/models/...`) do not host `gemma-3-4b-it` directly for hosted serverless generation. To call open Gemma models via Google AI Studio API, developers must target the active cloud-hosted Gemma models (such as `gemma-2-2b-it`, `gemma-2-9b-it`, `gemma-2-27b-it` or `gemma-4-31b-it` if available on the model service list), or host them locally / via a third-party model hosting platform. Direct invocation of `gemma-3-4b-it` via the SDK results in the observed `404 Not Found` error.

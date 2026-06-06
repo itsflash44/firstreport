@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { Suspense, useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useNavigationWithQuery } from '@/lib/useNavigationWithQuery';
 import { LANGUAGES, t, openingFor, type LangCode } from '@/lib/i18n';
@@ -50,7 +50,7 @@ const URGENCY_BODIES: Record<LangCode, [string, string, string]> = {
 
 const DEMO_SUMMARY = 'सुनीता देवी, 38 वर्ष, घरेलू सहायिका, गाज़ियाबाद। थाने में FIR दर्ज करने से मना किया गया।';
 
-export default function HomePage() {
+function HomeContent() {
   const router = useNavigationWithQuery();
   const { lang, setLanguage } = useLanguage();
   const [persona, setPersona] = useState<PersonaSpec>(PERSONAS[0]);
@@ -320,6 +320,14 @@ export default function HomePage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-ivory" />}>
+      <HomeContent />
+    </Suspense>
   );
 }
 

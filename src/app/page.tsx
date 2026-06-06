@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import LuxuryNav from '@/components/landing/LuxuryNav';
 import HeroLanding from '@/components/landing/HeroLanding';
 import UserJourney from '@/components/landing/UserJourney';
@@ -12,7 +12,7 @@ import LuxuryFooter from '@/components/landing/LuxuryFooter';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import type { LangCode } from '@/lib/i18n';
 
-export default function LandingPage() {
+function LandingContent() {
   const [selectedLang, setSelectedLang] = useState<LangCode>('hi-IN');
 
   // Read persisted preference once on mount
@@ -44,5 +44,13 @@ export default function LandingPage() {
       </main>
       <LuxuryFooter selectedLang={selectedLang} />
     </div>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-ivory" />}>
+      <LandingContent />
+    </Suspense>
   );
 }

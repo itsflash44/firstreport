@@ -3,6 +3,7 @@
 .env.local
 .env.production
 .env.template
+.env.production.template
 .env.templete
 claude.md
 CLAUDE.md

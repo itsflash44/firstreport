@@ -257,7 +257,9 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
-      <LayoutContent>{children}</LayoutContent>
+      <Suspense fallback={null}>
+        <LayoutContent>{children}</LayoutContent>
+      </Suspense>
     </LanguageProvider>
   );
 }
